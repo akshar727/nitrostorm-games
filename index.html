@@ -17,16 +17,28 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/16.2.0/umd/react-dom.production.min.js"></script>
     <!-- import tailwindcss -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link rel="icon" type="image/x-icon" href="/logo.svg" />
     <style type="text/tailwindcss">
       @tailwind base;
       @tailwind components;
       @tailwind utilities;
 
       .app .btn {
-        @apply tw-cursor-pointer tw-rounded-md tw-border-none hover:tw-bg-white tw-px-6 tw-py-3 tw-font-medium tw-shadow-md tw-transition-all tw-duration-300 tw-outline -tw-outline-offset-2 tw-outline-2;
+        @apply tw-cursor-pointer disabled:tw-cursor-not-allowed disabled:tw-shadow-none tw-rounded-md tw-border-none hover:tw-bg-white tw-px-6 tw-py-3 tw-font-medium tw-shadow-md tw-transition-all tw-duration-300 tw-outline -tw-outline-offset-2 tw-outline-2 disabled:tw-opacity-50;
       }
       html {
         scroll-behavior: smooth;
+      }
+
+      .email-input {
+        @apply tw-shadow-md invalid:tw-text-bookmark-red;
       }
 
       .app hr {
@@ -34,11 +46,11 @@
       }
 
       .app .btn-red {
-        @apply tw-bg-bookmark-red tw-text-white hover:tw-text-bookmark-red tw-shadow-bookmark-red/50 tw-outline-bookmark-red;
+        @apply tw-bg-bookmark-red tw-text-white hover:tw-text-bookmark-red disabled:hover:tw-text-white disabled:hover:tw-bg-bookmark-red tw-shadow-bookmark-red/50 tw-outline-bookmark-red;
       }
 
       .app .btn-black {
-        @apply tw-bg-bookmark-black tw-text-bookmark-white tw-outline-bookmark-black hover:tw-text-bookmark-black tw-shadow-bookmark-grey/50;
+        @apply tw-bg-bookmark-black disabled:hover:tw-bg-bookmark-black disabled:hover:tw-text-bookmark-white tw-text-bookmark-white tw-outline-bookmark-black hover:tw-text-bookmark-black tw-shadow-bookmark-grey/50;
       }
     </style>
     <script>
@@ -77,6 +89,33 @@
   <body>
     <div class="app"></div>
     <script type="text/babel">
+      const products = [
+        {
+          name: "Turret Overload",
+          price: 32.99,
+          src: "s3.webp",
+        },
+        {
+          name: "Turtle Clicker",
+          price: 28.99,
+          src: "s.webp",
+        },
+        {
+          name: "Tales of the Robot",
+          price: 32.99,
+          src: "s4.webp",
+        },
+        {
+          name: "MILKMAN",
+          price: 23.99,
+          src: "s2.webp",
+        },
+        {
+          name: "Sesordle",
+          price: 27.99,
+          src: "s5.svg",
+        },
+      ];
       document.addEventListener("DOMContentLoaded", function (event) {
         var scrollpos = localStorage.getItem("scrollpos");
         if (scrollpos) window.scrollTo(0, scrollpos, "smooth");
@@ -85,7 +124,7 @@
       window.onbeforeunload = function (e) {
         localStorage.setItem("scrollpos", window.scrollY);
       };
-      function MenuItems() {
+      function MenuItems(props) {
         return (
           <React.Fragment>
             <li className="tw-cursor-pointer tw-transition-colors tw-duration-300 hover:tw-text-bookmark-red">
@@ -94,9 +133,11 @@
             <li className="tw-cursor-pointer tw-transition-colors tw-duration-300 hover:tw-text-bookmark-red">
               <a href="#products">Products</a>
             </li>
-            <li className="tw-cursor-pointer tw-transition-colors tw-duration-300 hover:tw-text-bookmark-red">
-              <a href="#contact">Contact</a>
-            </li>
+            {props.header && (
+              <li className="tw-cursor-pointer tw-transition-colors tw-duration-300 hover:tw-text-bookmark-red">
+                <a href="#contact">Contact</a>
+              </li>
+            )}
           </React.Fragment>
         );
       }
@@ -118,6 +159,13 @@
       function Logo() {
         return <img src="logo.svg" width="70" height="70" alt="logo" />;
       }
+      function handleSubmit() {
+        document.querySelector(".contact-form").style.display = "none";
+        document.querySelector(".thanks").style.display = "block";
+      }
+      function openSidebar() {
+        document.querySelector(".sidebar").style.display = "block";
+      }
 
       function Landing() {
         return (
@@ -131,13 +179,18 @@
                   <Logo />
                 </div>
                 <ul className="tw-hidden tw-flex-1 tw-items-center tw-justify-end tw-gap-12 tw-text-xs tw-uppercase tw-text-bookmark-blue sm:tw-flex">
-                  <MenuItems />
+                  <MenuItems header={true} />
                 </ul>
-                <div className="tw-flex tw-flex-1 tw-justify-end sm:tw-hidden">
-                  <i className="fas fa-bars tw-text-2xl"></i>
-                </div>
+                <button className="tw-flex tw-flex-1 tw-justify-end sm:tw-hidden" onClick={openSidebar}>
+                  <i className="fas fa-bars tw-text-2xl hover:tw-text-bookmark-red tw-transition-colors tw-duration-300"></i>
+                </button>
               </nav>
             </header>
+
+            {/* sidebar */}
+            <div className="sidebar tw-flex tw-flex-col tw-hidden tw-absolute tw-w-screen tw-h-screen tw-bg-slate-600/50">
+                  <h1>hi</h1>  
+            </div>
 
             {/* Hero */}
             <section className="tw-relative" id="hero">
@@ -152,11 +205,17 @@
                     have a game for you, try our games for free in-store today.
                   </p>
                   <div className="tw-flex tw-flex-wrap tw-justify-center tw-gap-6">
-                    <button type="button" className="btn btn-red">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        window.location.href = "#products";
+                      }}
+                      className="btn btn-red"
+                    >
                       View Products
                     </button>
-                    <button type="button" className="btn btn-black">
-                      Store Info
+                    <button type="button" disabled className="btn btn-black">
+                      Store Info (COMING SOON)
                     </button>
                   </div>
                 </div>
@@ -172,12 +231,53 @@
                 </div>
               </div>
             </section>
-
-            {/* Features */}
+            {/* Products */}
             <section
-              className="tw-mt-20 tw-bg-bookmark-white tw-py-20 lg:tw-mt-60"
-              id="features"
+              className="tw-mt-20 tw-py-20 tw-bg-bookmark-white lg:tw-mt-60"
+              id="products"
             >
+              <div className="tw-mx-auto tw-px-2 sm:tw-w-3/4 lg:tw-w-5/12">
+                <h1 className="tw-text-center tw-text-3xl tw-text-bookmark-blue">
+                  Products
+                </h1>
+                <p className="tw-mt-4 tw-text-center tw-text-bookmark-grey">
+                  Here are the products we sell. We have a wide variety of games
+                  from triple A titles to our own original indie games.
+                </p>
+              </div>
+              {/* Cards */}
+              {/* Remove large queries to remove step */}
+              {/* set mbs and mts to my's to make center piece stand out */}
+              <div className="tw-container tw-mt-16 tw-grid tw-max-w-screen-lg tw-grid-cols-1 tw-gap-16 md:tw-grid-cols-2 lg:tw-grid-cols-3">
+                {products.map(function (product, index) {
+                  return (
+                    <div className="tw-flex tw-flex-col tw-rounded-md tw-shadow-md">
+                      <div className="tw-flex tw-flex-col tw-items-center tw-border-b tw-p-6">
+                        <img
+                          src={product.src}
+                          width="1600"
+                          height="1270"
+                          loading="lazy"
+                          alt={product.name + "™"}
+                        />
+                        <h3 className="tw-mb-2 tw-mt-5 tw-text-lg tw-text-bookmark-blue">
+                          {product.name}™
+                        </h3>
+                        <p className="tw-mb-2 tw-font-light tw-text-bookmark-grey">
+                          ${product.price}
+                        </p>
+                      </div>
+
+                      <div className="tw-flex tw-p-6">
+                        <BuyButton />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </section>
+            {/* Features */}
+            <section className="tw-mt-20 tw-py-20" id="features">
               {/* Heading */}
               <div className="tw-mx-auto tw-px-2 sm:tw-w-3/4 lg:tw-w-5/12">
                 <h1 className="tw-text-center tw-text-3xl tw-text-bookmark-blue">
@@ -214,8 +314,8 @@
                       from your phone to your tablet or your pc or even
                       consoles.
                     </p>
-                    <button type="button" className="btn btn-red">
-                      Learn More
+                    <button type="button" disabled className="btn btn-red">
+                      Learn More (COMING SOON)
                     </button>
                   </div>
                 </div>
@@ -247,8 +347,8 @@
                       20% markup per game so you know you're not getting
                       scammed.
                     </p>
-                    <button type="button" className="btn btn-red">
-                      View Policies
+                    <button type="button" disabled className="btn btn-red">
+                      View Policies (COMING SOON)
                     </button>
                   </div>
                 </div>
@@ -279,115 +379,40 @@
                       community forum where you can ask questions and get
                       answers from other users about games.
                     </p>
-                    <button type="button" className="btn btn-red">
-                      Go to the Forum
+                    <button type="button" disabled className="btn btn-red">
+                      Get Support (COMING SOON)
                     </button>
                   </div>
                 </div>
               </div>
-            </section>
-
-            {/* Download */}
-            <section className="tw-mt-20 tw-py-20" id="products">
-              <div className="tw-mx-auto tw-px-2 sm:tw-w-3/4 lg:tw-w-5/12">
-                <h1 className="tw-text-center tw-text-3xl tw-text-bookmark-blue">
-                  Products
-                </h1>
-                <p className="tw-mt-4 tw-text-center tw-text-bookmark-grey">
-                  Here are the products we sell. We have a wide variety of games
-                  from triple A titles to our own original indie games.
-                </p>
-              </div>
-              {/* Cards */}
-              {/* Remove large queries to remove step */}
-              {/* set mbs and mts to my's to make center piece stand out */}
-              <div className="tw-container tw-mt-16 tw-grid tw-max-w-screen-lg tw-grid-cols-1 tw-gap-16 md:tw-grid-cols-2 lg:tw-grid-cols-3">
-                {/* Card 1 */}
-                <div className="tw-flex tw-flex-col tw-rounded-md tw-shadow-md">
-                  <div className="tw-flex tw-flex-col tw-items-center tw-border-b tw-p-6">
+              {/* Feature 4 */}
+              <div className="tw-relative tw-mt-20 lg:tw-mt-52">
+                <div className="tw-container tw-flex tw-flex-col tw-items-center tw-justify-center tw-gap-x-24 lg:tw-flex-row-reverse">
+                  {/* Image */}
+                  <div className="tw-z-10 tw-mb-10 tw-flex tw-flex-1 tw-justify-center lg:tw-mb-0">
                     <img
-                      src="s3.webp"
-                      width="1890"
-                      height="1500"
+                      className="tw-h-5/6 tw-w-5/6 sm:tw-h-3/4 sm:tw-w-3/4 md:tw-h-full md:tw-w-full"
+                      src="f4.svg"
+                      alt="feature-4"
                       loading="lazy"
-                      alt="turret overload"
+                      width="987.58708"
+                      height="714.02784"
                     />
-                    <h3 className="tw-mb-2 tw-mt-5 tw-text-lg tw-text-bookmark-blue">
-                      Turret Overload™
-                    </h3>
-                    <p className="tw-mb-2 tw-font-light tw-text-bookmark-grey">
-                      $32.99
+                  </div>
+                  {/* Content */}
+                  <div className="tw-flex tw-flex-1 tw-flex-col tw-items-center lg:tw-items-start">
+                    <h1 className="tw-text-3xl tw-text-bookmark-blue">
+                      Game Chat
+                    </h1>
+                    <p className="tw-my-4 tw-text-center tw-text-bookmark-grey sm:tw-w-3/4 lg:tw-w-full lg:tw-text-left">
+                      Need help with a stage of a game, wanna talk about your
+                      genius strategy? Game Chat is the perfect place for you.
+                      You can ask for help, play with others, and even share
+                      strategies!
                     </p>
-                  </div>
-
-                  <div className="tw-flex tw-p-6">
-                    <BuyButton />
-                  </div>
-                </div>
-                {/* Card 2 */}
-                <div className="tw-flex tw-flex-col tw-rounded-md tw-shadow-md">
-                  <div className="tw-flex tw-flex-col tw-items-center tw-border-b tw-p-6">
-                    <img
-                      src="s.webp"
-                      width="470"
-                      height="348"
-                      loading="lazy"
-                      alt="turtle clicker"
-                    />
-                    <h3 className="tw-mb-2 tw-mt-5 tw-text-lg tw-text-bookmark-blue">
-                      Turtle Clicker™
-                    </h3>
-                    <p className="tw-mb-2 tw-font-light tw-text-bookmark-grey">
-                      $28.99
-                    </p>
-                  </div>
-
-                  <div className="tw-flex tw-p-6">
-                    <BuyButton />
-                  </div>
-                </div>
-                {/* Card 3 */}
-                <div className="tw-flex tw-flex-col tw-rounded-md tw-shadow-md">
-                  <div className="tw-flex tw-flex-col tw-items-center tw-border-b tw-p-6">
-                    <img
-                      src="s4.webp"
-                      width="1108"
-                      height="852"
-                      loading="lazy"
-                      alt="tales of the robot"
-                    />
-                    <h3 className="tw-mb-2 tw-mt-5 tw-text-lg tw-text-bookmark-blue">
-                      The Tales of the Robot™
-                    </h3>
-                    <p className="tw-mb-2 tw-font-light tw-text-bookmark-grey">
-                      $32.99
-                    </p>
-                  </div>
-
-                  <div className="tw-flex tw-p-6">
-                    <BuyButton />
-                  </div>
-                </div>
-                {/* Card 4 */}
-                <div className="tw-flex tw-flex-col tw-rounded-md tw-shadow-md">
-                  <div className="tw-flex tw-flex-col tw-items-center tw-border-b tw-p-6">
-                    <img
-                      src="s2.webp"
-                      width="1600"
-                      height="1270"
-                      loading="lazy"
-                      alt="MILKMAN™"
-                    />
-                    <h3 className="tw-mb-2 tw-mt-5 tw-text-lg tw-text-bookmark-blue">
-                      MILKMAN™
-                    </h3>
-                    <p className="tw-mb-2 tw-font-light tw-text-bookmark-grey">
-                      $23.99
-                    </p>
-                  </div>
-
-                  <div className="tw-flex tw-p-6">
-                    <BuyButton />
+                    <button type="button" disabled className="btn btn-red">
+                      Open Game Chat™ (COMING SOON)
+                    </button>
                   </div>
                 </div>
               </div>
@@ -405,21 +430,25 @@
                   <h1 className="tw-text-center tw-text-3xl">
                     Have a question? Feel free to call or email us!
                   </h1>
-                  <div className="tw-mt-8 tw-flex tw-gap-6 tw-flex-col">
+                  <div className="tw-mt-8 tw-flex tw-gap-6 tw-flex-col contact-form">
                     <input
-                      type="text"
+                      type="email"
                       placeholder="Enter your email address"
-                      className="tw-flex-1 tw-rounded-md tw-px-2 tw-py-3 tw-text-black focus:tw-outline-none"
+                      className="tw-flex-1 tw-text-green-700 tw-transition-colors tw-duration-200 tw-rounded-md tw-px-2 tw-py-3 tw-text-black email-input focus:tw-outline-none"
+                      required
                     />
-                    <input
-                      type="text"
+                    <textarea
                       placeholder="Enter your message"
                       className="tw-flex-1 tw-rounded-md tw-px-2 tw-py-3 tw-text-black focus:tw-outline-none"
+                      required
                     />
-                    <button type="button" className="btn btn-black">
+                    <button type="button" onClick={handleSubmit} className="btn btn-black">
                       Send Message
                     </button>
                   </div>
+                  <div className="tw-mt-8 tw-flex tw-gap-6 tw-font-bold tw-text-lg tw-flex-col tw-hidden tw-text-center thanks">
+                    Thank you! Your message has been sent.
+                    </div>
                   <p className="tw-uppercase tw-mt-4 tw-font-light tw-text-center tw-text-lg">
                     or
                   </p>
@@ -432,13 +461,21 @@
             </section>
 
             {/* Footer */}
-            <footer className="tw-bg-bookmark-black tw-py-8">
+            <footer className="tw-bg-bookmark-black tw-py-8 tw-text-white">
               <div className="tw-container tw-flex tw-flex-col tw-items-center md:tw-flex-row">
                 <div className="tw-flex tw-flex-1 tw-flex-wrap tw-items-center tw-justify-center tw-gap-12 md:tw-justify-start">
                   <Logo />
-                  <ul className="tw-flex tw-gap-12 tw-text-xs tw-uppercase tw-text-white">
+                  <ul className="tw-flex tw-gap-12 tw-text-xs tw-uppercase">
                     <MenuItems />
                   </ul>
+                </div>
+                <div className="flex gap-10 mt-12 md:mt-0">
+                  <h3 className="tw-font-light">
+                    support.nitrostorm@gmail.com
+                  </h3>
+                  <h2 className="tw-text-bookmark-white tw-font-light">
+                    1035 University Ave, San Diego, CA 92103
+                  </h2>
                 </div>
               </div>
             </footer>
