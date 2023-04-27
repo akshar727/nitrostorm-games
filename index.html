@@ -13,20 +13,39 @@
     />
     <link rel="preload" as="image" href="hero.svg" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/16.2.0/umd/react.production.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/16.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/16.8.0/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/16.8.0/umd/react-dom.production.min.js"></script>
     <!-- import tailwindcss -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link rel="icon" type="image/x-icon" href="/logo.svg" />
     <style type="text/tailwindcss">
       @tailwind base;
       @tailwind components;
       @tailwind utilities;
 
       .app .btn {
-        @apply tw-cursor-pointer tw-rounded-md tw-border-none hover:tw-bg-white tw-px-6 tw-py-3 tw-font-medium tw-shadow-md tw-transition-all tw-duration-300 tw-outline -tw-outline-offset-2 tw-outline-2;
+        @apply tw-cursor-pointer disabled:tw-cursor-not-allowed disabled:tw-shadow-none tw-rounded-md tw-border-none hover:tw-bg-white tw-px-6 tw-py-3 tw-font-medium tw-shadow-md tw-transition-all tw-duration-300 tw-outline -tw-outline-offset-2 tw-outline-2 disabled:tw-opacity-50;
       }
       html {
         scroll-behavior: smooth;
+      }
+
+      .email-input {
+        @apply tw-shadow-md invalid:tw-text-bookmark-red;
+      }
+
+      .message-input:invalid ~ .message-error {
+        @apply tw-opacity-100 tw-visible;
+      }
+      .email-input:invalid ~ .email-error {
+        @apply tw-opacity-100 tw-visible;
       }
 
       .app hr {
@@ -34,11 +53,45 @@
       }
 
       .app .btn-red {
-        @apply tw-bg-bookmark-red tw-text-white hover:tw-text-bookmark-red tw-shadow-bookmark-red/50 tw-outline-bookmark-red;
+        @apply tw-bg-bookmark-red tw-text-white hover:tw-text-bookmark-red disabled:hover:tw-text-white disabled:hover:tw-bg-bookmark-red tw-shadow-bookmark-red/50 tw-outline-bookmark-red;
       }
 
       .app .btn-black {
-        @apply tw-bg-bookmark-black tw-text-bookmark-white tw-outline-bookmark-black hover:tw-text-bookmark-black tw-shadow-bookmark-grey/50;
+        @apply tw-bg-bookmark-black disabled:hover:tw-bg-bookmark-black disabled:hover:tw-text-bookmark-white tw-text-bookmark-white tw-outline-bookmark-black hover:tw-text-bookmark-black tw-shadow-black/50;
+      }
+      .app .subtitle {
+        @apply tw-text-bookmark-red;
+      }
+      .app .title {
+        @apply tw-font-medium tw-text-bookmark-red;
+      }
+
+      @keyframes fadeOut {
+        0% {
+          opacity: 1;
+        }
+        100% {
+          opacity: 0;
+        }
+      }
+      @keyframes fadeIn {
+        0% {
+          opacity: 0;
+        }
+        100% {
+          opacity: 1;
+        }
+      }
+
+      .fadeOut {
+        animation-name: fadeOut;
+        animation-duration: 0.5s;
+        animation-fill-mode: forwards;
+      }
+      .fadeIn {
+        animation-name: fadeIn;
+        animation-duration: 0.5s;
+        animation-fill-mode: forwards;
       }
     </style>
     <script>
@@ -77,6 +130,34 @@
   <body>
     <div class="app"></div>
     <script type="text/babel">
+      const { useState, useEffect } = React; // web-browser variant
+      const products = [
+        {
+          name: "Turret Overload",
+          price: 32.99,
+          src: "s3.webp",
+        },
+        {
+          name: "Turtle Clicker",
+          price: 28.99,
+          src: "s.webp",
+        },
+        {
+          name: "Tales of the Robot",
+          price: 15.99,
+          src: "s4.webp",
+        },
+        {
+          name: "MILKMAN",
+          price: 23.99,
+          src: "s2.webp",
+        },
+        {
+          name: "Sesordle",
+          price: 27.99,
+          src: "s5.svg",
+        },
+      ];
       document.addEventListener("DOMContentLoaded", function (event) {
         var scrollpos = localStorage.getItem("scrollpos");
         if (scrollpos) window.scrollTo(0, scrollpos, "smooth");
@@ -85,7 +166,7 @@
       window.onbeforeunload = function (e) {
         localStorage.setItem("scrollpos", window.scrollY);
       };
-      function MenuItems() {
+      function MenuItems(props) {
         return (
           <React.Fragment>
             <li className="tw-cursor-pointer tw-transition-colors tw-duration-300 hover:tw-text-bookmark-red">
@@ -94,9 +175,11 @@
             <li className="tw-cursor-pointer tw-transition-colors tw-duration-300 hover:tw-text-bookmark-red">
               <a href="#products">Products</a>
             </li>
-            <li className="tw-cursor-pointer tw-transition-colors tw-duration-300 hover:tw-text-bookmark-red">
-              <a href="#contact">Contact</a>
-            </li>
+            {props.header && (
+              <li className="tw-cursor-pointer tw-transition-colors tw-duration-300 hover:tw-text-bookmark-red">
+                <a href="#contact">Contact</a>
+              </li>
+            )}
           </React.Fragment>
         );
       }
@@ -107,19 +190,98 @@
           </button>
         );
       }
-      // <li>
-      //   <button
-      //     type="button"
-      //     className="btn btn-red tw-px-7 tw-py-3 tw-uppercase"
-      //   >
-      //     Login
-      //   </button>
-      // </li>
       function Logo() {
         return <img src="logo.svg" width="70" height="70" alt="logo" />;
       }
+      const pattern =
+        /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9]+(?:\.[a-zA-Z0-9-]+)*$/;
+      function handleSubmit(message, email) {
+        let err = false;
+        if (message.trim() === "") {
+          // add the invalid attribute to .message
+          document
+            .querySelector(".message-input")
+            .setCustomValidity("Please enter a message");
+          document.querySelector(".message-input").classList.add("invalid");
+          err = true;
+        } else {
+          document.querySelector(".message-input").setCustomValidity("");
+          document.querySelector(".message-input").classList.remove("invalid");
+        }
+        if (email.trim() === "" || !pattern.test(email)) {
+          // add the invalid attribute to .message
+          document
+            .querySelector(".email-input")
+            .setCustomValidity("Please enter a valid email");
+          document.querySelector(".email-input").classList.add("invalid");
+          err = true;
+        } else {
+          document.querySelector(".email-input").setCustomValidity("");
+          document.querySelector(".email-input").classList.remove("invalid");
+        }
+        if (err) return;
+
+        document.querySelector(".contact-form").classList.add("fadeOut");
+        // capture when the animation finishes to hide .contact-form
+        document.querySelector(".contact-form").addEventListener(
+          "animationend",
+          () => {
+            document.querySelector(".contact-form").style.display = "none";
+          },
+          { once: true }
+        );
+        document.querySelector(".thanks").style.display = "block";
+        // capture when the animaton finishes to remove the class
+        document.querySelector(".thanks").addEventListener(
+          "animationend",
+          () => {
+            document.querySelector(".thanks").classList.remove("fadeOut");
+          },
+          { once: true }
+        );
+      }
+      function openSidebar() {
+        document.querySelector(".sidebar").style.display = "block";
+      }
 
       function Landing() {
+        const [message, setMessage] = useState("");
+        const [email, setEmail] = useState("");
+        const [hasInteractedWithMessage, setHasInteractedWithMessage] =
+          useState(false);
+        const [hasInteractedWithEmail, setHasInteractedWithEmail] =
+          useState(false);
+
+        useEffect(() => {
+          if (hasInteractedWithMessage) {
+            if (message.trim() === "") {
+              // add the invalid attribute to .message
+              document
+                .querySelector(".message-input")
+                .setCustomValidity("Please enter a message");
+              document.querySelector(".message-input").classList.add("invalid");
+            } else {
+              document.querySelector(".message-input").setCustomValidity("");
+              document
+                .querySelector(".message-input")
+                .classList.remove("invalid");
+            }
+          }
+          if (hasInteractedWithEmail) {
+            if (email.trim() === "" || !pattern.test(email)) {
+              // add the invalid attribute to .message
+              document
+                .querySelector(".email-input")
+                .setCustomValidity("Please enter a valid email");
+              document.querySelector(".email-input").classList.add("invalid");
+            } else {
+              document.querySelector(".email-input").setCustomValidity("");
+              document
+                .querySelector(".email-input")
+                .classList.remove("invalid");
+            }
+          }
+        }, [message, email]);
         return (
           <div className="tw-overflow-hidden tw-font-Rubik">
             {/* Header */}
@@ -130,21 +292,29 @@
                 <div className="tw-py-1">
                   <Logo />
                 </div>
-                <ul className="tw-hidden tw-flex-1 tw-items-center tw-justify-end tw-gap-12 tw-text-xs tw-uppercase tw-text-bookmark-blue sm:tw-flex">
-                  <MenuItems />
+                <ul className="tw-hidden tw-flex-1 tw-items-center tw-justify-end tw-gap-12 tw-text-xs tw-uppercase sm:tw-flex">
+                  <MenuItems header={true} />
                 </ul>
-                <div className="tw-flex tw-flex-1 tw-justify-end sm:tw-hidden">
-                  <i className="fas fa-bars tw-text-2xl"></i>
-                </div>
+                <button
+                  className="tw-flex tw-flex-1 tw-justify-end sm:tw-hidden"
+                  onClick={openSidebar}
+                >
+                  <i className="fas fa-bars tw-text-2xl hover:tw-text-bookmark-red tw-transition-colors tw-duration-300"></i>
+                </button>
               </nav>
             </header>
+
+            {/* sidebar */}
+            <div className="sidebar tw-flex tw-flex-col tw-hidden tw-absolute tw-w-screen tw-h-screen tw-bg-slate-600/50">
+              <h1>hi</h1>
+            </div>
 
             {/* Hero */}
             <section className="tw-relative" id="hero">
               <div className="tw-container tw-mt-14 tw-flex tw-flex-col-reverse tw-items-center tw-gap-12 lg:tw-mt-28 lg:tw-flex-row">
                 {/* Content */}
                 <div className="tw-flex tw-flex-1 tw-flex-col tw-items-center lg:tw-items-start">
-                  <h2 className="tw-mb-6 tw-text-center tw-text-3xl tw-text-bookmark-blue md:tw-text-4xl lg:tw-text-left lg:tw-text-5xl">
+                  <h2 className="tw-mb-6 tw-text-center tw-text-3xl tw-text-bookmark-red md:tw-text-4xl lg:tw-text-left lg:tw-text-5xl">
                     Games for everyone, all at one place.
                   </h2>
                   <p className="tw-mb-6 tw-text-center tw-text-lg tw-text-bookmark-grey lg:tw-text-left">
@@ -152,10 +322,22 @@
                     have a game for you, try our games for free in-store today.
                   </p>
                   <div className="tw-flex tw-flex-wrap tw-justify-center tw-gap-6">
-                    <button type="button" className="btn btn-red">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        window.location.href = "#products";
+                      }}
+                      className="btn btn-red"
+                    >
                       View Products
                     </button>
-                    <button type="button" className="btn btn-black">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        window.location.href = "#info";
+                      }}
+                      className="btn btn-black"
+                    >
                       Store Info
                     </button>
                   </div>
@@ -172,20 +354,62 @@
                 </div>
               </div>
             </section>
-
-            {/* Features */}
+            {/* Products */}
             <section
-              className="tw-mt-20 tw-bg-bookmark-white tw-py-20 lg:tw-mt-60"
-              id="features"
+              className="tw-mt-20 tw-py-20 tw-bg-bookmark-white lg:tw-mt-60"
+              id="products"
             >
+              <div className="tw-mx-auto tw-px-2 sm:tw-w-3/4 lg:tw-w-5/12">
+                <h1 className="tw-text-center tw-text-3xl title">Products</h1>
+                <p className="tw-mt-4 tw-text-center tw-text-bookmark-grey">
+                  Here are the products we sell. We have a wide variety of games
+                  from triple A titles to our own original indie games.
+                </p>
+              </div>
+              {/* Cards */}
+              {/* Remove large queries to remove step */}
+              {/* set mbs and mts to my's to make center piece stand out */}
+              <div className="tw-container tw-mt-16 tw-grid tw-max-w-screen-lg tw-grid-cols-1 tw-gap-16 md:tw-grid-cols-2 lg:tw-grid-cols-3">
+                {products.map(function (product, index) {
+                  return (
+                    <div className="tw-flex tw-flex-col tw-rounded-md tw-shadow-md">
+                      <div className="tw-flex tw-flex-col tw-items-center tw-border-b tw-p-6">
+                        <div className="tw-w-64 tw-h-64">
+                          <img
+                            src={product.src}
+                            loading="lazy"
+                            alt={product.name + "™"}
+                            className="tw-rounded-2xl tw-w-full"
+                            style={{height: "203px"}}
+                          />
+                        </div>
+                        <h3 className="tw-mb-2 tw-mt-5 tw-text-lg tw-text-bookmark-red">
+                          {product.name}™
+                        </h3>
+                        <p className="tw-mb-2 tw-font-light tw-text-bookmark-grey">
+                          ${product.price}
+                        </p>
+                      </div>
+
+                      <div className="tw-flex tw-p-6">
+                        <BuyButton />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </section>
+            {/* Features */}
+            <section className="tw-mt-20 tw-py-20" id="features">
               {/* Heading */}
               <div className="tw-mx-auto tw-px-2 sm:tw-w-3/4 lg:tw-w-5/12">
-                <h1 className="tw-text-center tw-text-3xl tw-text-bookmark-blue">
+                <h1 className="tw-text-center tw-text-3xl title tw-font-medium tw-text-bookmark-red">
                   Features
                 </h1>
                 <p className="tw-mt-4 tw-text-center tw-text-bookmark-grey">
-                  Not only do we sell games, we're different from others. We
-                  have a lot of features that you can use to your advantage.
+                  Not only do we sell games, we're different from other
+                  companies. We have a lot of features that you can use to your
+                  advantage.
                 </p>
               </div>
 
@@ -205,7 +429,7 @@
                   </div>
                   {/* Content */}
                   <div className="tw-flex tw-flex-1 tw-flex-col tw-items-center lg:tw-items-start">
-                    <h1 className="tw-text-3xl tw-text-bookmark-blue">
+                    <h1 className="tw-text-3xl tw-text-bookmark-red">
                       Compatibility
                     </h1>
                     <p className="tw-my-4 tw-text-center tw-text-bookmark-grey sm:tw-w-3/4 lg:tw-w-full lg:tw-text-left">
@@ -214,8 +438,8 @@
                       from your phone to your tablet or your pc or even
                       consoles.
                     </p>
-                    <button type="button" className="btn btn-red">
-                      Learn More
+                    <button type="button" disabled className="btn btn-red">
+                      Learn More (COMING SOON)
                     </button>
                   </div>
                 </div>
@@ -237,9 +461,7 @@
                   </div>
                   {/* Content */}
                   <div className="tw-flex tw-flex-1 tw-flex-col tw-items-center lg:tw-items-start">
-                    <h1 className="tw-text-3xl tw-text-bookmark-blue">
-                      Prices
-                    </h1>
+                    <h1 className="tw-text-3xl tw-text-bookmark-red">Prices</h1>
                     <p className="tw-my-4 tw-text-center tw-text-bookmark-grey sm:tw-w-3/4 lg:tw-w-full lg:tw-text-left">
                       Not only do we sell our games at a lower price than
                       others, we also have a lot of discounts and sales that you
@@ -247,8 +469,8 @@
                       20% markup per game so you know you're not getting
                       scammed.
                     </p>
-                    <button type="button" className="btn btn-red">
-                      View Policies
+                    <button type="button" disabled className="btn btn-red">
+                      View Policies (COMING SOON)
                     </button>
                   </div>
                 </div>
@@ -270,7 +492,7 @@
                   </div>
                   {/* Content */}
                   <div className="tw-flex tw-flex-1 tw-flex-col tw-items-center lg:tw-items-start">
-                    <h1 className="tw-text-3xl tw-text-bookmark-blue">
+                    <h1 className="tw-text-3xl tw-text-bookmark-red">
                       Support
                     </h1>
                     <p className="tw-my-4 tw-text-center tw-text-bookmark-grey sm:tw-w-3/4 lg:tw-w-full lg:tw-text-left">
@@ -279,120 +501,76 @@
                       community forum where you can ask questions and get
                       answers from other users about games.
                     </p>
-                    <button type="button" className="btn btn-red">
-                      Go to the Forum
+                    <button type="button" disabled className="btn btn-red">
+                      Get Support (COMING SOON)
+                    </button>
+                  </div>
+                </div>
+              </div>
+              {/* Feature 4 */}
+              <div className="tw-relative tw-mt-20 lg:tw-mt-52">
+                <div className="tw-container tw-flex tw-flex-col tw-items-center tw-justify-center tw-gap-x-24 lg:tw-flex-row-reverse">
+                  {/* Image */}
+                  <div className="tw-z-10 tw-mb-10 tw-flex tw-flex-1 tw-justify-center lg:tw-mb-0">
+                    <img
+                      className="tw-h-5/6 tw-w-5/6 sm:tw-h-3/4 sm:tw-w-3/4 md:tw-h-full md:tw-w-full"
+                      src="f4.svg"
+                      alt="feature-4"
+                      loading="lazy"
+                      width="987.58708"
+                      height="714.02784"
+                    />
+                  </div>
+                  {/* Content */}
+                  <div className="tw-flex tw-flex-1 tw-flex-col tw-items-center lg:tw-items-start">
+                    <h1 className="tw-text-3xl tw-text-bookmark-red">
+                      Game Chat
+                    </h1>
+                    <p className="tw-my-4 tw-text-center tw-text-bookmark-grey sm:tw-w-3/4 lg:tw-w-full lg:tw-text-left">
+                      Need help with a stage of a game, wanna talk about your
+                      genius strategy? Game Chat is the perfect place for you.
+                      You can ask for help, play with others, and even share
+                      strategies!
+                    </p>
+                    <button type="button" disabled className="btn btn-red">
+                      Open Game Chat™ (COMING SOON)
                     </button>
                   </div>
                 </div>
               </div>
             </section>
-
-            {/* Download */}
-            <section className="tw-mt-20 tw-py-20" id="products">
-              <div className="tw-mx-auto tw-px-2 sm:tw-w-3/4 lg:tw-w-5/12">
-                <h1 className="tw-text-center tw-text-3xl tw-text-bookmark-blue">
-                  Products
-                </h1>
-                <p className="tw-mt-4 tw-text-center tw-text-bookmark-grey">
-                  Here are the products we sell. We have a wide variety of games
-                  from triple A titles to our own original indie games.
-                </p>
-              </div>
-              {/* Cards */}
-              {/* Remove large queries to remove step */}
-              {/* set mbs and mts to my's to make center piece stand out */}
-              <div className="tw-container tw-mt-16 tw-grid tw-max-w-screen-lg tw-grid-cols-1 tw-gap-16 md:tw-grid-cols-2 lg:tw-grid-cols-3">
-                {/* Card 1 */}
-                <div className="tw-flex tw-flex-col tw-rounded-md tw-shadow-md">
-                  <div className="tw-flex tw-flex-col tw-items-center tw-border-b tw-p-6">
-                    <img
-                      src="s3.webp"
-                      width="1890"
-                      height="1500"
-                      loading="lazy"
-                      alt="turret overload"
-                    />
-                    <h3 className="tw-mb-2 tw-mt-5 tw-text-lg tw-text-bookmark-blue">
-                      Turret Overload™
-                    </h3>
-                    <p className="tw-mb-2 tw-font-light tw-text-bookmark-grey">
-                      $32.99
-                    </p>
+            <section
+              className="tw-py-20 tw-text-center tw-bg-bookmark-white"
+              id="info"
+            >
+              <div className="tw-container">
+                <div className="tw-mx-auto sm:tw-w-3/4 lg:tw-w-2/4">
+                  <h1 className="tw-text-3xl tw-mb-8 title">Store Info</h1>
+                  <div className="tw-flex tw-flex-col tw-gap-8 tw-items-center tw-justify-center">
+                    <h2 className="tw-text-xl tw-mb-6 subtitle">
+                      Opening Hours
+                    </h2>
+                    <ul className="tw-text-xl tw-mb-8 tw-marker-none">
+                      <li className="tw-text-bookmark-grey tw-text-xl tw-mb-5">
+                        Monday - Friday: 8am - 6pm
+                      </li>
+                      <li className="tw-text-bookmark-grey tw-text-xl tw-mb-5">
+                        Saturday: 8am-10pm
+                      </li>
+                      <li className="tw-text-bookmark-grey tw-text-xl tw-mb-5">
+                        Sunday: 8am - 8pm
+                      </li>
+                    </ul>
                   </div>
-
-                  <div className="tw-flex tw-p-6">
-                    <BuyButton />
-                  </div>
-                </div>
-                {/* Card 2 */}
-                <div className="tw-flex tw-flex-col tw-rounded-md tw-shadow-md">
-                  <div className="tw-flex tw-flex-col tw-items-center tw-border-b tw-p-6">
-                    <img
-                      src="s.webp"
-                      width="470"
-                      height="348"
-                      loading="lazy"
-                      alt="turtle clicker"
-                    />
-                    <h3 className="tw-mb-2 tw-mt-5 tw-text-lg tw-text-bookmark-blue">
-                      Turtle Clicker™
-                    </h3>
-                    <p className="tw-mb-2 tw-font-light tw-text-bookmark-grey">
-                      $28.99
-                    </p>
-                  </div>
-
-                  <div className="tw-flex tw-p-6">
-                    <BuyButton />
-                  </div>
-                </div>
-                {/* Card 3 */}
-                <div className="tw-flex tw-flex-col tw-rounded-md tw-shadow-md">
-                  <div className="tw-flex tw-flex-col tw-items-center tw-border-b tw-p-6">
-                    <img
-                      src="s4.webp"
-                      width="1108"
-                      height="852"
-                      loading="lazy"
-                      alt="tales of the robot"
-                    />
-                    <h3 className="tw-mb-2 tw-mt-5 tw-text-lg tw-text-bookmark-blue">
-                      The Tales of the Robot™
-                    </h3>
-                    <p className="tw-mb-2 tw-font-light tw-text-bookmark-grey">
-                      $32.99
-                    </p>
-                  </div>
-
-                  <div className="tw-flex tw-p-6">
-                    <BuyButton />
-                  </div>
-                </div>
-                {/* Card 4 */}
-                <div className="tw-flex tw-flex-col tw-rounded-md tw-shadow-md">
-                  <div className="tw-flex tw-flex-col tw-items-center tw-border-b tw-p-6">
-                    <img
-                      src="s2.webp"
-                      width="1600"
-                      height="1270"
-                      loading="lazy"
-                      alt="MILKMAN™"
-                    />
-                    <h3 className="tw-mb-2 tw-mt-5 tw-text-lg tw-text-bookmark-blue">
-                      MILKMAN™
-                    </h3>
-                    <p className="tw-mb-2 tw-font-light tw-text-bookmark-grey">
-                      $23.99
-                    </p>
-                  </div>
-
-                  <div className="tw-flex tw-p-6">
-                    <BuyButton />
+                  <div className="tw-flex tw-flex-col tw-gap-2 tw-items-center tw-justify-center">
+                    <h2 className="tw-text-xl tw-mb-6 subtitle">
+                      Address
+                    </h2>
+                    <h4 className="tw-mb-6 tw-text-bookmark-red tw-text-lg">1035 University Ave, San Diego, CA 92103</h4>
                   </div>
                 </div>
               </div>
             </section>
-
             <section
               className="tw-bg-bookmark-red tw-py-20 tw-text-white"
               id="contact"
@@ -400,25 +578,50 @@
               <div className="tw-container">
                 <div className="tw-mx-auto sm:tw-w-3/4 lg:tw-w-2/4">
                   <p className="tw-mb-8 tw-text-center tw-font-light tw-uppercase">
-                    some number+ messages replied to
+                    5,000+ messages replied to
                   </p>
                   <h1 className="tw-text-center tw-text-3xl">
-                    Have a question? Feel free to call or email us!
+                    Have a question? Feel free to call or send us a message!
                   </h1>
-                  <div className="tw-mt-8 tw-flex tw-gap-6 tw-flex-col">
+                  <div className="tw-mt-8 tw-flex tw-gap-4 tw-flex-col contact-form">
                     <input
                       type="text"
                       placeholder="Enter your email address"
-                      className="tw-flex-1 tw-rounded-md tw-px-2 tw-py-3 tw-text-black focus:tw-outline-none"
-                    />
-                    <input
-                      type="text"
+                      value={email}
+                      onChange={(e) => {
+                        setEmail(e.target.value);
+                        setHasInteractedWithEmail(true);
+                      }}
+                      className="tw-flex-1 tw-text-green-700 tw-transition-colors tw-duration-200 tw-rounded-md tw-px-2 tw-py-3 tw-text-black email-input focus:tw-outline-none"
+                    ></input>
+                    <h1 className="tw-invisible -tw-mt-4 email-error tw-opacity-0 tw-transition-all tw-duration-300">
+                      Please enter a valid email.
+                    </h1>
+                    <textarea
                       placeholder="Enter your message"
-                      className="tw-flex-1 tw-rounded-md tw-px-2 tw-py-3 tw-text-black focus:tw-outline-none"
+                      value={message}
+                      onChange={(e) => {
+                        setMessage(e.target.value);
+                        setHasInteractedWithMessage(true);
+                      }}
+                      className="tw-flex-1 tw-peer message-input tw-rounded-md tw-px-2 tw-py-3 tw-text-black focus:tw-outline-none"
+                      rows="3"
                     />
-                    <button type="button" className="btn btn-black">
+                    <h1 className="tw-invisible message-error -tw-mt-4 tw-opacity-0 tw-transition-all tw-duration-300">
+                      Please enter a message.
+                    </h1>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        handleSubmit(message, email);
+                      }}
+                      className="btn btn-black"
+                    >
                       Send Message
                     </button>
+                  </div>
+                  <div className="tw-mt-8 tw-flex tw-gap-6 tw-font-light tw-text-xl tw-flex-col tw-hidden tw-text-center fadeIn thanks">
+                    Thank you! Your message has been sent.
                   </div>
                   <p className="tw-uppercase tw-mt-4 tw-font-light tw-text-center tw-text-lg">
                     or
@@ -432,13 +635,21 @@
             </section>
 
             {/* Footer */}
-            <footer className="tw-bg-bookmark-black tw-py-8">
+            <footer className="tw-bg-bookmark-black tw-py-8 tw-text-white">
               <div className="tw-container tw-flex tw-flex-col tw-items-center md:tw-flex-row">
                 <div className="tw-flex tw-flex-1 tw-flex-wrap tw-items-center tw-justify-center tw-gap-12 md:tw-justify-start">
                   <Logo />
-                  <ul className="tw-flex tw-gap-12 tw-text-xs tw-uppercase tw-text-white">
+                  <ul className="tw-flex tw-gap-12 tw-text-xs tw-uppercase">
                     <MenuItems />
                   </ul>
+                </div>
+                <div className="flex gap-10 mt-12 md:mt-0">
+                  <h3 className="tw-font-light">
+                    support.nitrostorm@gmail.com
+                  </h3>
+                  <h2 className="tw-text-bookmark-white tw-font-light">
+                    1035 University Ave, San Diego, CA 92103
+                  </h2>
                 </div>
               </div>
             </footer>
