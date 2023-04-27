@@ -13,8 +13,8 @@
     />
     <link rel="preload" as="image" href="hero.svg" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/16.2.0/umd/react.production.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/16.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/16.8.0/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/16.8.0/umd/react-dom.production.min.js"></script>
     <!-- import tailwindcss -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link
@@ -41,6 +41,13 @@
         @apply tw-shadow-md invalid:tw-text-bookmark-red;
       }
 
+      .message-input:invalid ~ .message-error {
+        @apply tw-opacity-100 tw-visible;
+      }
+      .email-input:invalid ~ .email-error {
+        @apply tw-opacity-100 tw-visible;
+      }
+
       .app hr {
         border-top-width: 1px;
       }
@@ -50,7 +57,35 @@
       }
 
       .app .btn-black {
-        @apply tw-bg-bookmark-black disabled:hover:tw-bg-bookmark-black disabled:hover:tw-text-bookmark-white tw-text-bookmark-white tw-outline-bookmark-black hover:tw-text-bookmark-black tw-shadow-bookmark-grey/50;
+        @apply tw-bg-bookmark-black disabled:hover:tw-bg-bookmark-black disabled:hover:tw-text-bookmark-white tw-text-bookmark-white tw-outline-bookmark-black hover:tw-text-bookmark-black tw-shadow-black/50;
+      }
+
+      @keyframes fadeOut {
+        0% {
+          opacity: 1;
+        }
+        100% {
+          opacity: 0;
+        }
+      }
+      @keyframes fadeIn {
+        0% {
+          opacity: 0;
+        }
+        100% {
+          opacity: 1;
+        }
+      }
+
+      .fadeOut {
+        animation-name: fadeOut;
+        animation-duration: 0.5s;
+        animation-fill-mode: forwards;
+      }
+      .fadeIn {
+        animation-name: fadeIn;
+        animation-duration: 0.5s;
+        animation-fill-mode: forwards;
       }
     </style>
     <script>
@@ -89,6 +124,7 @@
   <body>
     <div class="app"></div>
     <script type="text/babel">
+      const { useState, useEffect } = React; // web-browser variant
       const products = [
         {
           name: "Turret Overload",
@@ -102,7 +138,7 @@
         },
         {
           name: "Tales of the Robot",
-          price: 32.99,
+          price: 15.99,
           src: "s4.webp",
         },
         {
@@ -148,26 +184,96 @@
           </button>
         );
       }
-      // <li>
-      //   <button
-      //     type="button"
-      //     className="btn btn-red tw-px-7 tw-py-3 tw-uppercase"
-      //   >
-      //     Login
-      //   </button>
-      // </li>
       function Logo() {
         return <img src="logo.svg" width="70" height="70" alt="logo" />;
       }
-      function handleSubmit() {
-        document.querySelector(".contact-form").style.display = "none";
+      const pattern =
+        /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9]+(?:\.[a-zA-Z0-9-]+)*$/;
+      function handleSubmit(message, email) {
+        let err = false;
+        if (message.trim() === "") {
+          // add the invalid attribute to .message
+          document
+            .querySelector(".message-input")
+            .setCustomValidity("Please enter a message");
+          document.querySelector(".message-input").classList.add("invalid");
+          err = true;
+        } else {
+          document.querySelector(".message-input").setCustomValidity("");
+          document.querySelector(".message-input").classList.remove("invalid");
+        }
+        if (email.trim() === "" || !pattern.test(email)) {
+              // add the invalid attribute to .message
+              document
+                .querySelector(".email-input")
+                .setCustomValidity("Please enter a valid email");
+              document.querySelector(".email-input").classList.add("invalid");
+              err = true;
+            } else {
+              document.querySelector(".email-input").setCustomValidity("");
+              document
+                .querySelector(".email-input")
+                .classList.remove("invalid");
+        }
+        if (err) return;
+
+        document.querySelector(".contact-form").classList.add("fadeOut");
+        // capture when the animation finishes to hide .contact-form
+        document
+          .querySelector(".contact-form")
+          .addEventListener("animationend", () => {
+            document.querySelector(".contact-form").style.display = "none";
+          },{once: true});
         document.querySelector(".thanks").style.display = "block";
+        // capture when the animaton finishes to remove the class
+        document
+          .querySelector(".thanks")
+          .addEventListener("animationend", () => {
+            document.querySelector(".thanks").classList.remove("fadeOut");
+          },{once: true});
       }
       function openSidebar() {
         document.querySelector(".sidebar").style.display = "block";
       }
 
       function Landing() {
+        const [message, setMessage] = useState("");
+        const [email, setEmail] = useState("");
+        const [hasInteractedWithMessage, setHasInteractedWithMessage] =
+          useState(false);
+        const [hasInteractedWithEmail, setHasInteractedWithEmail] =
+          useState(false);
+
+        useEffect(() => {
+          if (hasInteractedWithMessage) {
+            if (message.trim() === "") {
+              // add the invalid attribute to .message
+              document
+                .querySelector(".message-input")
+                .setCustomValidity("Please enter a message");
+              document.querySelector(".message-input").classList.add("invalid");
+            } else {
+              document.querySelector(".message-input").setCustomValidity("");
+              document
+                .querySelector(".message-input")
+                .classList.remove("invalid");
+            }
+          }
+          if (hasInteractedWithEmail) {
+            if (email.trim() === "" || !pattern.test(email)) {
+              // add the invalid attribute to .message
+              document
+                .querySelector(".email-input")
+                .setCustomValidity("Please enter a valid email");
+              document.querySelector(".email-input").classList.add("invalid");
+            } else {
+              document.querySelector(".email-input").setCustomValidity("");
+              document
+                .querySelector(".email-input")
+                .classList.remove("invalid");
+            }
+          }
+        }, [message, email]);
         return (
           <div className="tw-overflow-hidden tw-font-Rubik">
             {/* Header */}
@@ -181,7 +287,10 @@
                 <ul className="tw-hidden tw-flex-1 tw-items-center tw-justify-end tw-gap-12 tw-text-xs tw-uppercase tw-text-bookmark-blue sm:tw-flex">
                   <MenuItems header={true} />
                 </ul>
-                <button className="tw-flex tw-flex-1 tw-justify-end sm:tw-hidden" onClick={openSidebar}>
+                <button
+                  className="tw-flex tw-flex-1 tw-justify-end sm:tw-hidden"
+                  onClick={openSidebar}
+                >
                   <i className="fas fa-bars tw-text-2xl hover:tw-text-bookmark-red tw-transition-colors tw-duration-300"></i>
                 </button>
               </nav>
@@ -189,7 +298,7 @@
 
             {/* sidebar */}
             <div className="sidebar tw-flex tw-flex-col tw-hidden tw-absolute tw-w-screen tw-h-screen tw-bg-slate-600/50">
-                  <h1>hi</h1>  
+              <h1>hi</h1>
             </div>
 
             {/* Hero */}
@@ -255,10 +364,11 @@
                       <div className="tw-flex tw-flex-col tw-items-center tw-border-b tw-p-6">
                         <img
                           src={product.src}
-                          width="1600"
-                          height="1270"
+                          width="1200"
+                          height="600"
                           loading="lazy"
                           alt={product.name + "™"}
+                          className="tw-rounded-md"
                         />
                         <h3 className="tw-mb-2 tw-mt-5 tw-text-lg tw-text-bookmark-blue">
                           {product.name}™
@@ -430,25 +540,44 @@
                   <h1 className="tw-text-center tw-text-3xl">
                     Have a question? Feel free to call or email us!
                   </h1>
-                  <div className="tw-mt-8 tw-flex tw-gap-6 tw-flex-col contact-form">
+                  <div className="tw-mt-8 tw-flex tw-gap-4 tw-flex-col contact-form">
                     <input
-                      type="email"
+                      type="text"
                       placeholder="Enter your email address"
+                      value={email}
+                      onChange={(e) => {
+                        setEmail(e.target.value);
+                        setHasInteractedWithEmail(true);
+                      }}
                       className="tw-flex-1 tw-text-green-700 tw-transition-colors tw-duration-200 tw-rounded-md tw-px-2 tw-py-3 tw-text-black email-input focus:tw-outline-none"
-                      required
-                    />
+                    ></input>
+                    <h1 className="tw-invisible email-error tw-opacity-0 tw-transition-all tw-duration-300">
+                      Please enter a valid email
+                    </h1>
                     <textarea
                       placeholder="Enter your message"
-                      className="tw-flex-1 tw-rounded-md tw-px-2 tw-py-3 tw-text-black focus:tw-outline-none"
-                      required
+                      value={message}
+                      onChange={(e) => {
+                        setMessage(e.target.value);
+                        setHasInteractedWithMessage(true);
+                      }}
+                      className="tw-flex-1 tw-peer message-input tw-rounded-md tw-px-2 tw-py-3 tw-text-black focus:tw-outline-none"
+                      rows="3"
                     />
-                    <button type="button" onClick={handleSubmit} className="btn btn-black">
+                    <h1 className="tw-invisible message-error tw-opacity-0 tw-transition-all tw-duration-300">
+                      Please enter a message
+                    </h1>
+                    <button
+                      type="button"
+                      onClick={() =>{handleSubmit(message,email)}}
+                      className="btn btn-black"
+                    >
                       Send Message
                     </button>
                   </div>
-                  <div className="tw-mt-8 tw-flex tw-gap-6 tw-font-bold tw-text-lg tw-flex-col tw-hidden tw-text-center thanks">
+                  <div className="tw-mt-8 tw-flex tw-gap-6 tw-font-light tw-text-xl tw-flex-col tw-hidden tw-text-center fadeIn thanks">
                     Thank you! Your message has been sent.
-                    </div>
+                  </div>
                   <p className="tw-uppercase tw-mt-4 tw-font-light tw-text-center tw-text-lg">
                     or
                   </p>
