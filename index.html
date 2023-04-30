@@ -155,7 +155,7 @@
         {
           name: "Sesordle",
           price: 27.99,
-          src: "s5.svg",
+          src: "s5.webp",
         },
       ];
       document.addEventListener("DOMContentLoaded", function (event) {
@@ -166,18 +166,50 @@
       window.onbeforeunload = function (e) {
         localStorage.setItem("scrollpos", window.scrollY);
       };
+      function enableScrolling() {
+        document.body.style.overflow = "auto";
+      }
+      function disableScrolling() {
+        document.body.style.overflow = "hidden";
+      }
+      function goTo(href) {
+        closeSidebar();
+        window.location.href = href;
+      }
       function MenuItems(props) {
+        if (props.mobile) {
+          useEffect(() => {
+            const mFeatures = document.querySelector(".mFeatures");
+            const mProducts = document.querySelector(".mProducts");
+            const mContact = document.querySelector(".mContact");
+            mFeatures.addEventListener("click", () => {
+              goTo("#features");
+            });
+            mProducts.addEventListener("click", () => {
+              goTo("#products");
+            });
+            mContact.addEventListener("click", () => {
+              goTo("#products");
+            });
+          });
+        }
         return (
           <React.Fragment>
             <li className="tw-cursor-pointer tw-transition-colors tw-duration-300 hover:tw-text-bookmark-red">
-              <a href="#features">Features</a>
+              <a href="#features" className={props.mobile ? "mFeatures" : ""}>
+                Features
+              </a>
             </li>
             <li className="tw-cursor-pointer tw-transition-colors tw-duration-300 hover:tw-text-bookmark-red">
-              <a href="#products">Products</a>
+              <a href="#products" className={props.mobile ? "mProducts" : ""}>
+                Products
+              </a>
             </li>
             {props.header && (
               <li className="tw-cursor-pointer tw-transition-colors tw-duration-300 hover:tw-text-bookmark-red">
-                <a href="#contact">Contact</a>
+                <a className={props.mobile ? "mContact" : ""} href="#contact">
+                  Contact
+                </a>
               </li>
             )}
           </React.Fragment>
@@ -241,7 +273,13 @@
         );
       }
       function openSidebar() {
+        window.scrollTo(0, 0, "smooth");
         document.querySelector(".sidebar").style.display = "block";
+        disableScrolling();
+      }
+      function closeSidebar() {
+        document.querySelector(".sidebar").style.display = "none";
+        enableScrolling();
       }
 
       function Landing() {
@@ -305,8 +343,29 @@
             </header>
 
             {/* sidebar */}
-            <div className="sidebar tw-flex tw-flex-col tw-hidden tw-absolute tw-w-screen tw-h-screen tw-bg-slate-600/50">
-              <h1>hi</h1>
+            <div className="sidebar tw-absolute tw-top-0 tw-w-screen tw-h-screen tw-hidden tw-z-20">
+              <div className="tw-flex tw-gap-6 tw-uppercase tw-flex-col tw-items-center tw-justify-center tw-text-white sm:tw-hidden tw-w-full tw-h-full tw-bg-slate-600/70">
+                <div className="tw-right-0 tw-mr-8 tw-absolute tw-top-0 tw-mt-12">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="15"
+                    onClick={closeSidebar}
+                    style={{transform: "scale(1.35)"}}
+                    className="tw-group"
+                  >
+                    <path
+                      fill="currentColor"
+                      fill-rule="evenodd"
+                      className="tw-transition-colors tw-duration-300 tw-fill-white group-hover:tw-fill-bookmark-red"
+                      d="M8 5.379L13.303.075l2.122 2.122L10.12 7.5l5.304 5.303-2.122 2.122L8 9.62l-5.303 5.304-2.122-2.122L5.88 7.5.575 2.197 2.697.075 8 5.38z"
+                    />
+                  </svg>
+                </div>
+                <ul className="tw-gap-12 tw-text-xs tw-text-center tw-uppercase tw-flex tw-flex-col tw-font-light !tw-tracking-wide !tw-text-4xl">
+                  <MenuItems header={true} mobile={true} />
+                </ul>
+              </div>
             </div>
 
             {/* Hero */}
@@ -380,7 +439,7 @@
                             loading="lazy"
                             alt={product.name + "™"}
                             className="tw-rounded-2xl tw-w-full"
-                            style={{height: "203px"}}
+                            style={{ height: "203px" }}
                           />
                         </div>
                         <h3 className="tw-mb-2 tw-mt-5 tw-text-lg tw-text-bookmark-red">
@@ -563,10 +622,10 @@
                     </ul>
                   </div>
                   <div className="tw-flex tw-flex-col tw-gap-2 tw-items-center tw-justify-center">
-                    <h2 className="tw-text-xl tw-mb-6 subtitle">
-                      Address
-                    </h2>
-                    <h4 className="tw-mb-6 tw-text-bookmark-red tw-text-lg">1035 University Ave, San Diego, CA 92103</h4>
+                    <h2 className="tw-text-xl tw-mb-6 subtitle">Address</h2>
+                    <h4 className="tw-mb-6 tw-text-bookmark-red tw-text-lg">
+                      1035 University Ave, San Diego, CA 92103
+                    </h4>
                   </div>
                 </div>
               </div>
