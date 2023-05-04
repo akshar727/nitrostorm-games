@@ -25,12 +25,13 @@ SECRET_KEY = 'django-insecure-glfpyfyc%%jqv4m5@)9tsfv)%p)*6-j23+xtgkn)(mhv!*lrs(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'frontend',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
