@@ -1,0 +1,67 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.btn {
+  @apply tw-cursor-pointer tw-rounded-md tw-border-none tw-px-6 tw-py-3 tw-font-medium tw-shadow-md tw-outline tw-outline-2 -tw-outline-offset-2 tw-transition-all tw-duration-300 hover:tw-bg-white disabled:tw-cursor-not-allowed disabled:tw-opacity-50 disabled:tw-shadow-none;
+}
+html {
+  scroll-behavior: smooth;
+}
+
+.email-input {
+  @apply tw-shadow-md invalid:tw-text-bookmark-red;
+}
+
+.message-input:invalid ~ .message-error {
+  @apply tw-visible tw-opacity-100;
+}
+.email-input:invalid ~ .email-error {
+  @apply tw-visible tw-opacity-100;
+}
+
+hr {
+  border-top-width: 1px;
+}
+
+.btn-red {
+  @apply tw-bg-bookmark-red tw-text-white tw-shadow-bookmark-red/50 tw-outline-bookmark-red hover:tw-text-bookmark-red disabled:hover:tw-bg-bookmark-red disabled:hover:tw-text-white;
+}
+
+.btn-black {
+  @apply tw-bg-bookmark-black tw-text-bookmark-white tw-shadow-black/50 tw-outline-bookmark-black hover:tw-text-bookmark-black disabled:hover:tw-bg-bookmark-black disabled:hover:tw-text-bookmark-white;
+}
+.subtitle {
+  @apply tw-text-bookmark-red;
+}
+.title {
+  @apply tw-font-medium tw-text-bookmark-red;
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.fadeOut {
+  animation-name: fadeOut;
+  animation-duration: 0.5s;
+  animation-fill-mode: forwards;
+}
+.fadeIn {
+  animation-name: fadeIn;
+  animation-duration: 0.5s;
+  animation-fill-mode: forwards;
+}
