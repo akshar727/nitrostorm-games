@@ -10,7 +10,7 @@ class ChatRoomConsumer(WebsocketConsumer):
     def connect(self):
         # set self.room_name equaal to the text after ws/chat/<whtever is here> the url doesnt have kwargs only a single endpoint
         self.room_name = self.scope['path'].replace('/ws/chat/', '').replace('/', '')
-        print(self.scope['user'])
+        u = self.scope['user']
 
         self.room_group_name = 'chat_%s' % self.room_name
 
@@ -25,7 +25,7 @@ class ChatRoomConsumer(WebsocketConsumer):
             for message in user_conversations[self.room_name]['messages']:
                 self.send(text_data=json.dumps({
                     'message': message[1],
-                    'username': message[0],
+                    'username': "Anonymous",
                     'startData': True
                 }))
         user_conversations[self.room_name]['users'] += 1
@@ -38,9 +38,6 @@ class ChatRoomConsumer(WebsocketConsumer):
         )
         # check if there are any clients left in the room
         user_conversations[self.room_name]['users'] -= 1
-        if user_conversations[self.room_name]['users'] == 0:
-            print("bye bye, "+ self.room_name + "!")
-            del user_conversations[self.room_name]
 
     def receive(self, text_data):
         text_data_json = json.loads(text_data)

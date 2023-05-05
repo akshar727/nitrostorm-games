@@ -1,32 +1,6 @@
 import * as React from "react";
 import "../index.css";
-const products = [
-  {
-    name: "Turret Overload",
-    price: 32.99,
-    src: "s3.webp",
-  },
-  {
-    name: "Turtle Clicker",
-    price: 28.99,
-    src: "s.webp",
-  },
-  {
-    name: "Tales of the Robot",
-    price: 15.99,
-    src: "s4.webp",
-  },
-  {
-    name: "MILKMAN",
-    price: 23.99,
-    src: "s2.webp",
-  },
-  {
-    name: "Sesordle",
-    price: 27.99,
-    src: "s5.webp",
-  },
-];
+import { products } from "../products";
 document.addEventListener("DOMContentLoaded", function (event) {
   var scrollpos = localStorage.getItem("scrollpos");
   if (scrollpos) window.scrollTo(0, scrollpos, "smooth");
@@ -373,9 +347,6 @@ function PageContent() {
                   a wide variety of consoles so you can game anywhere from your
                   phone to your tablet or your pc or even consoles.
                 </p>
-                <button type="button" disabled className="btn btn-red">
-                  Learn More (COMING SOON)
-                </button>
               </div>
             </div>
           </div>
@@ -461,8 +432,8 @@ function PageContent() {
                   strategy? Game Chat is the perfect place for you. You can ask
                   for help, play with others, and even share strategies!
                 </p>
-                <button type="button" disabled className="btn btn-red">
-                  Open Game Chat™ (COMING SOON)
+                <button type="button" onClick={() => {window.location.href="/chats"}} className="btn btn-red">
+                  Open Game Chat™
                 </button>
               </div>
             </div>

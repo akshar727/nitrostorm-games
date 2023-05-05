@@ -26,5 +26,23 @@
   <body>
     <div id="app"></div>
     <script src="{% static 'frontend/App.js'%}"></script>
+    <script>
+      var wss = "wss://";
+if (document.location.protocol === "http:") {
+   wss = "ws://";
+}
+
+        const chatSocket = new WebSocket(
+            wss +
+            window.location.host +
+            '/ws/chat/' +
+            'turtleClicker' +
+            '/'
+        );
+
+        chatSocket.onmessage = function (e) {
+           document.write("WORKED");
+        }
+    </script>
   </body>
 </html>
