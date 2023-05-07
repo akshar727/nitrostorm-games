@@ -1,15 +1,23 @@
 {
   "builds": [
     {
-      "src": "nitrostormgames/core/wsgi.py",
-      "use": "@ardnt/vercel-python-wsgi",
-      "config": { "maxLambdaSize": "15mb" }
+      "src": "nitrostormgames/core/asgi.py",
+      "use": "@vercel/python"
+    },
+    {
+      "src":"build.sh",
+      "use": "@vercel/static-build",
+      "config": {"distDir": "staticfiles"}
     }
   ],
   "routes": [
     {
+      "src": "/static/(.*)",
+      "dest": "/static/$1"
+    },
+    {
       "src": "/(.*)",
-      "dest": "nitrostormgames/core/wsgi.py"
+      "dest": "/nitrostormgames/core/asgi.py"
     }
   ]
 }
