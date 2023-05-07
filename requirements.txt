@@ -15,6 +15,7 @@ pyasn1==0.4.8
 pyasn1-modules==0.2.8
 pycparser==2.21
 pyOpenSSL==23.1.1
+pysqlite3-binary==3.0.5
 pytz==2023.3
 service-identity==21.1.0
 six==1.16.0
