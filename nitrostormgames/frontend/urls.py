@@ -18,5 +18,15 @@ from . import views
 
 urlpatterns = [
     path("", views.home,name="home"),
-    path("chats", views.chat_menu,name="chats")
+    path("about/", views.about,name="about"),
+    path("login/", views.login,name="login"),
+    path("logout/", views.logout,name="logout"),
+    path("api/all-products/", views.all_products,name="all_products"),
+    path("chats/", views.chat_menu,name="chats"),
+    path("chat/turretOverload/", views.room,name="turretOverload"),
+    path("chat/sesordle/", views.room,name="sesordle"),
+    path("chat/turtleClicker/", views.room,name="turtleClicker"),
+    path("chat/robotTales/", views.room,name="robotTales"),
+    path("chat/milkman/", views.room,name="milkman"),
+
 ]

@@ -11,11 +11,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 
-CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels.layers.InMemoryChannelLayer',
-    },
-}
+
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -58,6 +54,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'core.urls'
+AUTH_USER_MODEL = 'frontend.User'
 
 TEMPLATES = [
     {
@@ -76,6 +73,15 @@ TEMPLATES = [
 ]
 
 ASGI_APPLICATION = 'core.asgi.application'
+
+
+# Channels
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    }
+}
 
 
 # Database

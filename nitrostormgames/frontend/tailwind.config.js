@@ -12,6 +12,9 @@ module.exports = {
         "bookmark-black": "#000000",
         "bookmark-white": "#f7f7f7",
       },
+      screens: {
+        sm: "680px",
+      },
     },
     fontFamily: {
       // bookmark landing page

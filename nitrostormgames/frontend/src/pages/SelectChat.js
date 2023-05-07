@@ -1,24 +1,27 @@
 import * as React from "react";
 import "../index.css";
-import { products } from "../products";
+import { getStatic, convertProductToDict } from "../constant";
 function ChatButton(props) {
-    return (
-            <button type="button" onClick={() => {window.location.href=`/chat/${props.product.replace(" ","-")}`}} className="btn btn-red tw-flex-1">
-              Open Chat
-            </button>
-    )
+  return (
+    <a
+      href={`/chat/${props.product.websocket}`}
+      className="btn btn-red tw-flex-1"
+    >
+      Open Chat
+    </a>
+  );
 }
-function PageContent() {
-    return (
-        <>
-            {/* title */}
-            <div className="tw-container tw-flex tw-mt-8">
-                <h1 className="tw-text-4xl">Choose a game to chat about</h1>
-            </div>
-            {/* games */}
-            <section
-          id="products"
-        >
+function PageContent({products}) {
+  return (
+    <>
+      {/* title */}
+      <div className="tw-container tw-mt-8 tw-flex">
+        <h1 className="tw-text-4xl tw-font-medium tw-text-bookmark-red">
+          All Game Chats
+        </h1>
+      </div>
+      {/* games */}
+      <section id="products" className="tw-pb-6">
           <div className="tw-container tw-mt-16 tw-grid tw-max-w-screen-lg tw-grid-cols-1 tw-gap-16 md:tw-grid-cols-2 lg:tw-grid-cols-3">
             {products.map(function (product, index) {
               return (
@@ -29,7 +32,7 @@ function PageContent() {
                   <div className="tw-flex tw-flex-col tw-items-center tw-border-b tw-p-6">
                     <div className="tw-h-64 tw-w-64">
                       <img
-                        src={"static/images/" + product.src}
+                        src={getStatic() + "images/" + product.src}
                         loading="lazy"
                         alt={product.name + "™"}
                         className="tw-w-full tw-rounded-2xl"
@@ -42,17 +45,17 @@ function PageContent() {
                   </div>
 
                   <div className="tw-flex tw-p-6">
-                    <ChatButton product={product.name} />
+                    <ChatButton product={product} />
                   </div>
                 </div>
               );
             })}
           </div>
-        </section>
-        </>
-    )
+      </section>
+    </>
+  );
 }
 
-export default function ChatsPage() {
-    return <PageContent/>
+export default function ChatsPage({products}) {
+  return <PageContent products={products} />;
 }

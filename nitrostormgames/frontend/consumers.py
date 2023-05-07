@@ -9,8 +9,8 @@ user_conversations = {}
 class ChatRoomConsumer(WebsocketConsumer):
     def connect(self):
         # set self.room_name equaal to the text after ws/chat/<whtever is here> the url doesnt have kwargs only a single endpoint
+        print(user_conversations)
         self.room_name = self.scope['path'].replace('/ws/chat/', '').replace('/', '')
-        u = self.scope['user']
 
         self.room_group_name = 'chat_%s' % self.room_name
 
@@ -18,16 +18,21 @@ class ChatRoomConsumer(WebsocketConsumer):
             self.room_group_name,
             self.channel_name
         )
+        
         self.accept()
+        self.send(text_data=json.dumps({
+                'type': 'CONNECTION_SUCCESS'
+            }))
         if user_conversations.get(self.room_name) == None:
             user_conversations[self.room_name] = {'users': 0, 'messages': []}
         elif len(user_conversations[self.room_name]['messages']) > 0:
+            payload = []
             for message in user_conversations[self.room_name]['messages']:
-                self.send(text_data=json.dumps({
-                    'message': message[1],
-                    'username': "Anonymous",
-                    'startData': True
-                }))
+                payload.append({'username': message[0], 'message': message[1]})
+            self.send(text_data=json.dumps({
+                'type': 'MESSAGE_HISTORY',
+                'payload': payload
+            }))
         user_conversations[self.room_name]['users'] += 1
 
 
@@ -42,26 +47,26 @@ class ChatRoomConsumer(WebsocketConsumer):
     def receive(self, text_data):
         text_data_json = json.loads(text_data)
         message = text_data_json['message']
-        username = text_data_json['username']
         print(text_data_json)
         if text_data_json.get('startData') == True:
             return
-        user_conversations[self.room_name]['messages'].append((username, message))
+        user_conversations[self.room_name]['messages'].append(("Anonymous", message))
         async_to_sync(self.channel_layer.group_send)(
             self.room_group_name,
             {
-                'type': 'chatroom_message',
+                'type': 'message',
                 'message': message,
-                'username': username,
+                'username': "Anonymous",
             }
         )
 
-    def chatroom_message(self, event):
+    def message(self, event):
         message = event['message']
         username = event['username']
         self.send(text_data=json.dumps({
             'message': message,
             'username': username,
+            'type': 'MESSAGE'
         }))
 
     pass

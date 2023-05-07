@@ -1,10 +1,15 @@
 import * as React from "react";
 import "../index.css";
-import { products } from "../products";
+import { getStatic } from "../constant";
 document.addEventListener("DOMContentLoaded", function (event) {
-  var scrollpos = localStorage.getItem("scrollpos");
-  if (scrollpos) window.scrollTo(0, scrollpos, "smooth");
+  if (window.location.pathname == "/") {
+    var scrollpos = localStorage.getItem("scrollpos");
+    if (scrollpos) window.scrollTo(0, scrollpos, "smooth");
+  }
 });
+if (window.location.pathname == "/") {
+  var loggedIn = JSON.parse(document.getElementById("logged-in").textContent);
+}
 
 window.onbeforeunload = function (e) {
   localStorage.setItem("scrollpos", window.scrollY);
@@ -64,18 +69,86 @@ function MenuItems(props) {
           </a>
         </li>
       )}
+      {!loggedIn && props.header && (
+        <>
+          <li>
+            <a
+              className={
+                "btn btn-red tw-uppercase" +
+                (props.mobile ? " tw-w-52 !tw-font-light" : "")
+              }
+              href="/login/"
+            >
+              Login
+            </a>
+          </li>
+          <li>
+            <a
+              className={
+                "btn btn-black tw-uppercase" +
+                (props.mobile ? " tw-w-52 !tw-font-light" : "")
+              }
+              href="/signup/"
+            >
+              Sign Up
+            </a>
+          </li>
+        </>
+      )}
+      {loggedIn && props.header && (
+        <>
+          <li
+            className="tw-cursor-pointer tw-transition-colors tw-duration-300 hover:tw-text-bookmark-red"
+            key="cart"
+          >
+            <a href="/cart/">
+              {!props.mobile && (
+                <i
+                  className="fa-duotone fa-2xl fa-flip-horizontal fa-cart-shopping"
+                  style={{
+                    "--fa-primary-color": "#DE0A17",
+                    "--fa-secondary-color": "#DE0A17",
+                    "--fa-secondary-opacity": "0.4",
+                  }}
+                ></i>
+              )}
+              {props.mobile && <>My Cart</>}
+            </a>
+          </li>
+          <li>
+            <button
+              className={
+                "btn btn-red tw-uppercase" +
+                (props.mobile ? " tw-w-52 !tw-font-light" : "")
+              }
+              onClick={() => {
+                window.location.href = "/logout/";
+              }}
+            >
+              Log Out
+            </button>
+          </li>
+        </>
+      )}
     </React.Fragment>
   );
 }
 function BuyButton() {
   return (
     <button type="button" className="btn btn-red tw-flex-1">
-      Buy Now
+      Add to Cart
     </button>
   );
 }
 function Logo() {
-  return <img src="static/images/logo.svg" width="70" height="70" alt="logo" />;
+  return (
+    <img
+      src={getStatic() + "images/logo.svg"}
+      width="70"
+      height="70"
+      alt="logo"
+    />
+  );
 }
 const pattern =
   /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9]+(?:\.[a-zA-Z0-9-]+)*$/;
@@ -134,7 +207,7 @@ function closeSidebar() {
   enableScrolling();
 }
 
-function PageContent() {
+function PageContent({ products }) {
   const [message, setMessage] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [hasInteractedWithMessage, setHasInteractedWithMessage] =
@@ -193,7 +266,7 @@ function PageContent() {
 
         {/* sidebar */}
         <div className="sidebar tw-absolute tw-top-0 tw-z-20 tw-hidden tw-h-screen tw-w-screen">
-          <div className="tw-flex tw-h-full tw-w-full tw-flex-col tw-items-center tw-justify-center tw-gap-6 tw-bg-slate-600/70 tw-uppercase tw-text-white sm:tw-hidden">
+          <div className="tw-flex tw-h-full tw-w-full tw-flex-col tw-items-center tw-justify-center tw-gap-6 tw-bg-slate-600/80 tw-uppercase tw-text-white sm:tw-hidden">
             <div className="tw-absolute tw-right-0 tw-top-0 tw-mr-8 tw-mt-12">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -254,7 +327,7 @@ function PageContent() {
             <div className="tw-z-10 tw-mb-10 tw-flex tw-flex-1 tw-justify-center md:tw-mb-16 lg:tw-mb-0">
               <img
                 className="tw-h-5/6 tw-w-5/6 sm:tw-h-3/4 sm:tw-w-3/4 md:tw-h-full md:tw-w-full"
-                src="static/images/hero.svg"
+                src={getStatic() + "images/hero.svg"}
                 alt="hero"
                 width="916.77499"
                 height="612.05507"
@@ -287,7 +360,7 @@ function PageContent() {
                   <div className="tw-flex tw-flex-col tw-items-center tw-border-b tw-p-6">
                     <div className="tw-h-64 tw-w-64">
                       <img
-                        src={"static/images/" + product.src}
+                        src={getStatic() + "images/" + product.src}
                         loading="lazy"
                         alt={product.name + "™"}
                         className="tw-w-full tw-rounded-2xl"
@@ -330,7 +403,7 @@ function PageContent() {
               <div className="tw-z-10 tw-mb-10 tw-flex tw-flex-1 tw-justify-center lg:tw-mb-0">
                 <img
                   className="tw-h-5/6 tw-w-5/6 sm:tw-h-3/4 sm:tw-w-3/4 md:tw-h-full md:tw-w-full"
-                  src="static/images/f1.svg"
+                  src={getStatic() + "images/f1.svg"}
                   alt="feature-1"
                   loading="lazy"
                   width="920.10876"
@@ -358,7 +431,7 @@ function PageContent() {
               <div className="tw-z-10 tw-mb-10 tw-flex tw-flex-1 tw-justify-center lg:tw-mb-0">
                 <img
                   className="tw-h-5/6 tw-w-5/6 sm:tw-h-3/4 sm:tw-w-3/4 md:tw-h-full md:tw-w-full"
-                  src="static/images/f2.svg"
+                  src={getStatic() + "images/f2.svg"}
                   alt="feature-2"
                   loading="lazy"
                   width="740.67538"
@@ -388,7 +461,7 @@ function PageContent() {
               <div className="tw-z-10 tw-mb-10 tw-flex tw-flex-1 tw-justify-center lg:tw-mb-0">
                 <img
                   className="tw-h-5/6 tw-w-5/6 sm:tw-h-3/4 sm:tw-w-3/4 md:tw-h-full md:tw-w-full"
-                  src="static/images/f3.svg"
+                  src={getStatic() + "images/f3.svg"}
                   alt="feature-3"
                   loading="lazy"
                   width="562"
@@ -417,7 +490,7 @@ function PageContent() {
               <div className="tw-z-10 tw-mb-10 tw-flex tw-flex-1 tw-justify-center lg:tw-mb-0">
                 <img
                   className="tw-h-5/6 tw-w-5/6 sm:tw-h-3/4 sm:tw-w-3/4 md:tw-h-full md:tw-w-full"
-                  src="static/images/f4.svg"
+                  src={getStatic() + "images/f4.svg"}
                   alt="feature-4"
                   loading="lazy"
                   width="987.58708"
@@ -432,9 +505,9 @@ function PageContent() {
                   strategy? Game Chat is the perfect place for you. You can ask
                   for help, play with others, and even share strategies!
                 </p>
-                <button type="button" onClick={() => {window.location.href="/chats"}} className="btn btn-red">
+                <a type="button" href="/chats/" className="btn btn-red">
                   Open Game Chat™
-                </button>
+                </a>
               </div>
             </div>
           </div>
@@ -562,6 +635,6 @@ function PageContent() {
   );
 }
 
-export default function MainPage() {
-  return <PageContent />;
+export default function MainPage({ products }) {
+  return <PageContent products={products} />;
 }

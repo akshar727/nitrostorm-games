@@ -5,7 +5,7 @@ from channels.auth import AuthMiddlewareStack
 import frontend.routing
 
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'djangochannels.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
 
 application = ProtocolTypeRouter({
     "http": get_asgi_application(),
