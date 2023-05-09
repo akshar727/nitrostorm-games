@@ -1,12 +1,11 @@
 import * as React from "react";
 import "../index.css";
 
-
-function Message(props) {
+function Message({ message }) {
   return (
     <div className="message tw-w-full tw-min-w-full tw-rounded-md tw-bg-bookmark-white tw-p-4">
-      <p className="content tw-ml-8 tw-text-lg">{props.content}</p>
-      <small className="tw-ml-8 tw-text-gray-700">Anonymous</small>
+      <p className="content tw-ml-8 tw-text-lg">{message.message}</p>
+      <small className="tw-ml-8 tw-text-gray-700">{message.username}</small>
     </div>
   );
 }
@@ -15,13 +14,16 @@ var socket;
 export default function RoomPage({ product }) {
   const [inputText, setInputText] = React.useState("");
   const [messages, setMessages] = React.useState([]);
+  const [messagesLoaded, setMessagesLoaded] = React.useState(false);
   React.useEffect(() => {
     var wss = "wss://";
     if (document.location.protocol === "http:") {
       wss = "ws://";
     }
 
-    socket = new WebSocket(wss + window.location.host + "/ws/chat/" + product.websocket + "/");
+    socket = new WebSocket(
+      wss + window.location.host + "/ws/chat/" + product.websocket + "/"
+    );
 
     socket.onmessage = function (e) {
       const data = JSON.parse(e.data);
@@ -38,6 +40,7 @@ export default function RoomPage({ product }) {
       } else if (data.type == "MESSAGE_HISTORY") {
         setMessages(data.payload);
       }
+      setMessagesLoaded(true);
     };
   }, []);
   return (
@@ -51,10 +54,15 @@ export default function RoomPage({ product }) {
         {messages.map(function (m, index) {
           return (
             <div className={index === 0 ? "first:tw-mt-6" : ""} key={index}>
-              <Message content={m.message} />
+              <Message message={m} />
             </div>
           );
         })}
+        {messages.length === 0 && messagesLoaded && (
+          <h1 className="subtitle">
+            No messages yet... be the first one to chat!
+          </h1>
+        )}
       </section>
       <section className="form tw-bottom-[25px] tw-w-full">
         <div
@@ -75,8 +83,8 @@ export default function RoomPage({ product }) {
                 return;
               }
               setTimeout(() => {
-               var objDiv = document.getElementsByClassName("messages")[0];
-               objDiv.scrollTop = objDiv.scrollHeight;
+                var objDiv = document.getElementsByClassName("messages")[0];
+                objDiv.scrollTop = objDiv.scrollHeight;
               }, 100);
               socket.send(
                 JSON.stringify({

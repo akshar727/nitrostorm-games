@@ -50,13 +50,18 @@ class ChatRoomConsumer(WebsocketConsumer):
         print(text_data_json)
         if text_data_json.get('startData') == True:
             return
-        user_conversations[self.room_name]['messages'].append(("Anonymous", message))
+        name = ""
+        if self.scope['user'].is_authenticated:
+            name = self.scope['user'].first_name + " " + self.scope['user'].last_name
+        else:
+            name = "Anonymous"
+        user_conversations[self.room_name]['messages'].append((name, message))
         async_to_sync(self.channel_layer.group_send)(
             self.room_group_name,
             {
                 'type': 'message',
                 'message': message,
-                'username': "Anonymous",
+                'username': name,
             }
         )
 

@@ -14,19 +14,27 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.urls import path
+
+from .models import Product
 from . import views
+from django.conf.urls import handler404
 
 urlpatterns = [
     path("", views.home,name="home"),
     path("about/", views.about,name="about"),
     path("login/", views.login,name="login"),
+    path("signup/", views.signup,name="signup"),
+    path("checkout/", views.checkout,name="checkout"),
+    path("cart/", views.my_cart,name="my_cart"),
+    path("purchases/", views.purchases,name="purchases"),
     path("logout/", views.logout,name="logout"),
     path("api/all-products/", views.all_products,name="all_products"),
+    path("api/my-cart/", views.cart_api,name="api_cart"),
     path("chats/", views.chat_menu,name="chats"),
-    path("chat/turretOverload/", views.room,name="turretOverload"),
-    path("chat/sesordle/", views.room,name="sesordle"),
-    path("chat/turtleClicker/", views.room,name="turtleClicker"),
-    path("chat/robotTales/", views.room,name="robotTales"),
-    path("chat/milkman/", views.room,name="milkman"),
 
 ]
+
+for p in Product.objects.all():
+    urlpatterns.append(path(f"chat/{p.websocket}/", views.room, name=p.websocket))
+
+handler404 = "frontend.views.error_404"

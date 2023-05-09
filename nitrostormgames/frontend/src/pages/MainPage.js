@@ -5,10 +5,19 @@ document.addEventListener("DOMContentLoaded", function (event) {
   if (window.location.pathname == "/") {
     var scrollpos = localStorage.getItem("scrollpos");
     if (scrollpos) window.scrollTo(0, scrollpos, "smooth");
+
+    window.addEventListener(
+      "resize",
+      function (event) {
+        closeSidebar(true);
+      },
+      true
+    );
   }
 });
 if (window.location.pathname == "/") {
   var loggedIn = JSON.parse(document.getElementById("logged-in").textContent);
+  var csrftoken = document.querySelector("[name=csrfmiddlewaretoken]").value;
 }
 
 window.onbeforeunload = function (e) {
@@ -101,19 +110,10 @@ function MenuItems(props) {
             className="tw-cursor-pointer tw-transition-colors tw-duration-300 hover:tw-text-bookmark-red"
             key="cart"
           >
-            <a href="/cart/">
-              {!props.mobile && (
-                <i
-                  className="fa-duotone fa-2xl fa-flip-horizontal fa-cart-shopping"
-                  style={{
-                    "--fa-primary-color": "#DE0A17",
-                    "--fa-secondary-color": "#DE0A17",
-                    "--fa-secondary-opacity": "0.4",
-                  }}
-                ></i>
-              )}
-              {props.mobile && <>My Cart</>}
-            </a>
+            <a href="/cart/">Cart</a>
+          </li>
+          <li className="tw-cursor-pointer tw-transition-colors tw-duration-300 hover:tw-text-bookmark-red">
+            <a href="/purchases/">Purchases</a>
           </li>
           <li>
             <button
@@ -133,9 +133,37 @@ function MenuItems(props) {
     </React.Fragment>
   );
 }
-function BuyButton() {
+function BuyButton({ product }) {
   return (
-    <button type="button" className="btn btn-red tw-flex-1">
+    <button
+      type="button"
+      onClick={() => {
+        fetch("/api/my-cart/", {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": csrftoken,
+          },
+          body: JSON.stringify({
+            uuid: product.uuid,
+          }),
+        })
+          .then((r) => r.json())
+          .then((resp) => {
+            if (resp.success === true) {
+              alert(`Successfully added ${product.name} to your cart!`);
+            } else {
+              if (resp.error === "AUTH") {
+                alert("Please log in to add items to your cart.");
+                window.location.href = "/login/";
+              } else if (resp.error === "DUPLICATE") {
+                alert("This item is already in your cart.");
+              }
+            }
+          });
+      }}
+      className="btn btn-red tw-flex-1"
+    >
       Add to Cart
     </button>
   );
@@ -199,11 +227,25 @@ function handleSubmit(message, email) {
 }
 function openSidebar() {
   window.scrollTo(0, 0, "smooth");
-  document.querySelector(".sidebar").style.display = "block";
+  document.querySelector(".sidebar").classList.remove("fadeOut");
+  document.querySelector(".sidebar").classList.add("fadeIn");
   disableScrolling();
 }
-function closeSidebar() {
-  document.querySelector(".sidebar").style.display = "none";
+function closeSidebar(immediate = false) {
+  document.querySelector(".sidebar").classList.remove("fadeIn");
+  if (immediate) {
+    document.querySelector(".sidebar").style.opacity = 0;
+    return;
+  }
+  document.querySelector(".sidebar").classList.add("fadeOut");
+  // add an animationend check
+  document.querySelector(".sidebar").addEventListener(
+    "animationend",
+    () => {
+      document.querySelector(".sidebar").classList.remove("fadeOut");
+    },
+    { once: true }
+  );
   enableScrolling();
 }
 
@@ -265,7 +307,7 @@ function PageContent({ products }) {
         </header>
 
         {/* sidebar */}
-        <div className="sidebar tw-absolute tw-top-0 tw-z-20 tw-hidden tw-h-screen tw-w-screen">
+        <div className="sidebar tw-absolute tw-top-0 -tw-z-20 tw-h-screen tw-w-screen tw-opacity-0 tw-transition-opacity">
           <div className="tw-flex tw-h-full tw-w-full tw-flex-col tw-items-center tw-justify-center tw-gap-6 tw-bg-slate-600/80 tw-uppercase tw-text-white sm:tw-hidden">
             <div className="tw-absolute tw-right-0 tw-top-0 tw-mr-8 tw-mt-12">
               <svg
@@ -274,7 +316,7 @@ function PageContent({ products }) {
                 height="15"
                 onClick={closeSidebar}
                 style={{ transform: "scale(1.35)" }}
-                className="tw-group"
+                className="tw-group hover:tw-cursor-pointer"
               >
                 <path
                   fill="currentColor"
@@ -376,7 +418,7 @@ function PageContent({ products }) {
                   </div>
 
                   <div className="tw-flex tw-p-6">
-                    <BuyButton />
+                    <BuyButton product={product} />
                   </div>
                 </div>
               );
@@ -447,9 +489,9 @@ function PageContent({ products }) {
                   advantage of. And we also have a strict policy of 20% markup
                   per game so you know you're not getting scammed.
                 </p>
-                <button type="button" disabled className="btn btn-red">
+                {/* <button type="button" disabled className="btn btn-red">
                   View Policies (COMING SOON)
-                </button>
+                </button> */}
               </div>
             </div>
           </div>
@@ -477,9 +519,9 @@ function PageContent({ products }) {
                   where you can ask questions and get answers from other users
                   about games.
                 </p>
-                <button type="button" disabled className="btn btn-red">
+                {/* <button type="button" disabled className="btn btn-red">
                   Get Support (COMING SOON)
-                </button>
+                </button> */}
               </div>
             </div>
           </div>

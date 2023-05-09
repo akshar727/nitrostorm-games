@@ -13,7 +13,7 @@ module.exports = {
         "bookmark-white": "#f7f7f7",
       },
       screens: {
-        sm: "680px",
+        sm: "720px",
       },
     },
     fontFamily: {

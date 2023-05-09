@@ -105,7 +105,7 @@ export default function LoginPage() {
                 <p className="tw-text-sm tw-font-light tw-text-gray-500 dark:tw-text-gray-400">
                   Don’t have an account yet?{" "}
                   <a
-                    href="#"
+                    href="/signup/"
                     className="tw-text-red-600 tw-font-medium hover:tw-underline"
                   >
                     Sign up

@@ -1,6 +1,6 @@
 import * as React from "react";
 import "../index.css";
-import { getStatic, convertProductToDict } from "../constant";
+import { getStatic } from "../constant";
 function ChatButton(props) {
   return (
     <a

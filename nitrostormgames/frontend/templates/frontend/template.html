@@ -21,6 +21,7 @@
   <body>
     {% block body %}
     {% endblock %}
+      {{user.is_authenticated|json_script:"logged-in" }}
     <div id="app"></div>
     <script src="{% static 'frontend/App.js'%}"></script>
   </body>
