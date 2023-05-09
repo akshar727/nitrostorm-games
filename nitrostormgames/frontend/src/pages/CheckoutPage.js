@@ -9,7 +9,7 @@ function ProductCard({ product }) {
   );
 }
 if (window.location.href == "/checkout/") {
-  const csrftoken = document.querySelector("[name=csrfmiddlewaretoken]").value;
+  var csrftoken = document.querySelector("[name=csrfmiddlewaretoken]").value;
 }
 
 export default function CheckoutPage({ cart }) {
