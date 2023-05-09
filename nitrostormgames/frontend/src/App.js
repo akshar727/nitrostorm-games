@@ -29,6 +29,9 @@ function getProducts() {
 }
 
 function getCart() {
+  if (!loggedIn) {
+    return Promise.resolve({ cart: [] });
+  }
   return fetch("/api/my-cart/", {
     method: "GET",
   }).then((r) => r.json());

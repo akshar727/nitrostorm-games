@@ -1,6 +1,8 @@
 {% extends 'frontend/template.html' %}
 {% block title %}Nitrostorm Games: Checkout{% endblock title %}
+{% block head %}
+    <script src="https://www.paypal.com/sdk/js?client-id=AclWhcqgnPTFP32is4iR6z6cJ1zUenHn3taczqtz-_wgU3TiSuIzvHo7mggjfR774wLp8jLd7DjMUTZh"></script>
+{% endblock head %}
 {% block body %}
-{% csrf_token %}
-<script src="https://www.paypal.com/sdk/js?client-id=AclWhcqgnPTFP32is4iR6z6cJ1zUenHn3taczqtz-_wgU3TiSuIzvHo7mggjfR774wLp8jLd7DjMUTZh"></script>
+    {% csrf_token %}
 {% endblock body %}

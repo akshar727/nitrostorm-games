@@ -54,14 +54,24 @@ def purchases(request):
 def checkout(request):
     if not request.user.is_authenticated:
         return HttpResponseRedirect(reverse("login"))
+    return render(request, "frontend/checkout.html")
+
+
+def checkout_user(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({"success":False})
     if request.method == "POST":
         data = json.loads(request.body)
         cart = request.user.cart.all()
-        p = Purchase.objects.create(user=request.user, content=cart, cost=data.get("total"))
+        p = Purchase.objects.create(cost=data.get("total"))
+        for c in cart:
+            p.content.add(c)
+
         p.save()
+        request.user.purchases.add(p)
         request.user.cart.clear()
         return JsonResponse({"success":True})
-    return render(request, "frontend/checkout.html")
+    return JsonResponse({"success":False})
 
 def signup(request):
     if request.method == "POST":
@@ -157,6 +167,8 @@ def get_purchase_content(purchase):
 
 
 def is_owned(product,user):
+    if not user.is_authenticated:
+        return False
     purchases = user.purchases.all()
     for purchase in purchases:
         if product in purchase.content.all():
