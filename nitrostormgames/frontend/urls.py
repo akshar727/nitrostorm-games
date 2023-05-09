@@ -30,6 +30,7 @@ urlpatterns = [
     path("logout/", views.logout,name="logout"),
     path("api/all-products/", views.all_products,name="all_products"),
     path("api/my-cart/", views.cart_api,name="api_cart"),
+    path("api/purchases/", views.user_purchases,name="api_purchases"),
     path("chats/", views.chat_menu,name="chats"),
 
 ]

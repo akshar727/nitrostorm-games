@@ -163,8 +163,13 @@ function BuyButton({ product }) {
           });
       }}
       className="btn btn-red tw-flex-1"
+      disabled={product.owned ? true : false}
     >
-      Add to Cart
+      {product.owned? 
+      <>
+        Already Owned
+      </> :
+      <>Add to Cart</>}
     </button>
   );
 }

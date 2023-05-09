@@ -144,6 +144,8 @@ STATIC_URL = '/static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+CSRF_TRUSTED_ORIGINS = ['https://*.github.dev']
+
 
 if os.environ.get("VERCEL"):
     STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")

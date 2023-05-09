@@ -21,7 +21,7 @@ class Purchase(models.Model):
     date = models.DateTimeField(auto_now=True)
     cost = models.FloatField()
     def __str__(self):
-        return f"{self.user.username} bought {self.content} on {self.date}"
+        return f"{', '.join([p.name for p in self.content.all()])} on {self.date}"
 
 class User(AbstractUser):
     # add uuid

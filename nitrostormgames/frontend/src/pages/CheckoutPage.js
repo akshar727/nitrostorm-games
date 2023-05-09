@@ -14,6 +14,7 @@ if (window.location.href == "/checkout/") {
 
 export default function CheckoutPage({ cart }) {
   const [totalCost, setTotalCost] = React.useState(0);
+  const [loaded, setLoaded] = React.useState(false);
 
   React.useEffect(() => {
     let totalCost = 0;
@@ -25,8 +26,10 @@ export default function CheckoutPage({ cart }) {
         "You have no items in your cart. Please add items to your cart before checking out."
       );
       window.location.href = "/";
+      return;
     }
     setTotalCost(totalCost);
+    setLoaded(true);
     paypal
       .Buttons({
         style: {
@@ -81,6 +84,8 @@ export default function CheckoutPage({ cart }) {
   }, []);
   return (
     <>
+    {loaded && (
+    <>
       {/* title */}
       <div className="tw-container tw-mt-8 tw-flex">
         <h1 className="tw-text-4xl tw-font-medium tw-text-bookmark-red">
@@ -114,6 +119,8 @@ export default function CheckoutPage({ cart }) {
           className="tw-mt-8 tw-h-1/2 tw-w-1/2"
         ></div>
       </div>
+    </>
+    )}
     </>
   );
 }

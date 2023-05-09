@@ -56,7 +56,6 @@ def checkout(request):
         return HttpResponseRedirect(reverse("login"))
     if request.method == "POST":
         data = json.loads(request.body)
-        payment_id = data.get("transactionId")
         cart = request.user.cart.all()
         p = Purchase.objects.create(user=request.user, content=cart, cost=data.get("total"))
         p.save()
@@ -127,22 +126,50 @@ def logout(request):
     return HttpResponseRedirect(reverse("home"))
     
 
-def get_serialized_product(product):
+def get_serialized_product(product,user):
     return {
         'name': product.name,
         'price': product.price,
         'src': product.src,
         'websocket': product.websocket,
-        'uuid': product.uuid
+        'uuid': product.uuid,
+        'owned': is_owned(product,user)
     }
 
 # The all_products method gets all of the products in the database and then creates a list of serialized products to return. It is used to get all of the products in the database and return them as JSON.
 
 def all_products(request):
     products = Product.objects.all()
-    serialized_products = [get_serialized_product(product) for product in products]
+    serialized_products = [get_serialized_product(product,request.user) for product in products]
     return JsonResponse({'products':serialized_products})
 
+
+def get_purchase_content(purchase):
+    start = {"content":[], "date":purchase.date.strftime("%m/%d/%Y")}
+    for product in purchase.content.all():
+        start['content'].append(
+            {
+                "download_url": product.download_url,
+                "name":product.name,
+            }
+        )
+    return start
+
+
+def is_owned(product,user):
+    purchases = user.purchases.all()
+    for purchase in purchases:
+        if product in purchase.content.all():
+            print("a")
+            return True
+    return False
+
+def user_purchases(request):
+    purchases = request.user.purchases.all()
+    start = []
+    for purchase in purchases:
+        start.append(get_purchase_content(purchase))
+    return JsonResponse(start,safe=False)
 
 def my_cart(request):
     if not request.user.is_authenticated:
@@ -171,7 +198,7 @@ def cart_api(request):
         if not request.user.is_authenticated:
             return JsonResponse({"success":False, "error":"AUTH"})
         products = request.user.cart.all()
-        serialized_products = [get_serialized_product(product) for product in products]
+        serialized_products = [get_serialized_product(product,request.user) for product in products]
         return JsonResponse({'cart':serialized_products})
     else:
         return JsonResponse({"success":False})

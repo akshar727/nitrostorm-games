@@ -3,7 +3,7 @@ import "../index.css";
 
 function Message({ message }) {
   return (
-    <div className="message tw-w-full tw-min-w-full tw-rounded-md tw-bg-bookmark-white tw-p-4">
+    <div className="message tw-w-full tw-min-w-full tw-rounded-md tw-bg-bookmark-white tw-p-4 tw-break-words" style={{wordWrap:"break-word"}}>
       <p className="content tw-ml-8 tw-text-lg">{message.message}</p>
       <small className="tw-ml-8 tw-text-gray-700">{message.username}</small>
     </div>
@@ -74,6 +74,7 @@ export default function RoomPage({ product }) {
             placeholder="Type a message..."
             value={inputText}
             rows={1}
+            maxLength={500}
             onChange={(e) => setInputText(e.target.value)}
           />
           <button

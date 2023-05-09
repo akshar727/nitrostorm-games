@@ -5,6 +5,7 @@ export function convertProductToDict(product) {
     src: product.src,
     websocket: product.websocket,
     uuid: product.uuid,
+    owned: product.owned
   };
 }
 const STATIC_URL = "/static/";

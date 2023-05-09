@@ -19,6 +19,19 @@
     {% endblock %}
   </head>
   <body>
+    <script>
+      document.onerror = function (msg, url, lineNo) {
+  alert(
+    msg +
+      "\n" +
+      "URL: " +
+      url +
+      "\n" +
+      "Line: " +
+      lineNo +
+      "\n"
+  );
+};</script>
     {% block body %}
     {% endblock %}
       {{user.is_authenticated|json_script:"logged-in" }}
