@@ -26,22 +26,22 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-glfpyfyc%%jqv4m5@)9tsfv)%p)*6-j23+xtgkn)(mhv!*lrs('
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['*.vercel.app']
 
 
 # Application definition
 
 INSTALLED_APPS = [
-    'channels',
-    'frontend',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'channels',
+    'frontend',
 ]
 
 
@@ -78,7 +78,7 @@ TEMPLATES = [
     },
 ]
 
-ASGI_APPLICATION = 'core.asgi.application'
+ASGI_APPLICATION = 'core.asgi.app'
 
 
 # Channels
@@ -95,11 +95,15 @@ CHANNEL_LAYERS = {
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        #'ENGINE': 'django.db.backends.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'railway',
+        'USER': 'postgres',
+        'PASSWORD': 'ErA3kP7p1LjR2uy5qbfQ',
+        'HOST': 'containers-us-west-79.railway.app',
+        'PORT': '6790',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -144,9 +148,7 @@ STATIC_URL = '/static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CSRF_TRUSTED_ORIGINS = ['https://*.github.dev','http://localhost:8000','http://127.0.0.1:8000']
+CSRF_TRUSTED_ORIGINS = ['https://*.github.dev','http://localhost:8000','http://127.0.0.1:8000','https://*.vercel.app']
 
+STATIC_ROOT = BASE_DIR / 'staticfiles_build'
 
-if os.environ.get("VERCEL"):
-    STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
-    STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
