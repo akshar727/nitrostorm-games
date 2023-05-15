@@ -28,7 +28,7 @@ SECRET_KEY = 'django-insecure-glfpyfyc%%jqv4m5@)9tsfv)%p)*6-j23+xtgkn)(mhv!*lrs(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['*.vercel.app']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'channels',
     'frontend',
+    'daphne'
 ]
 
 
@@ -78,7 +79,7 @@ TEMPLATES = [
     },
 ]
 
-ASGI_APPLICATION = 'core.asgi.app'
+ASGI_APPLICATION = 'core.asgi.application'
 
 
 # Channels

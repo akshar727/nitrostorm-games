@@ -118,8 +118,6 @@ def login(request):
         data = json.loads(request.body)
         email = data.get("email")
         password = data.get("password")
-        print(email)
-        print(password)
         # try and authenticate the user
         user = authenticate(request,username=email, password=password)
         if user is not None:
@@ -172,7 +170,6 @@ def is_owned(product,user):
     purchases = user.purchases.all()
     for purchase in purchases:
         if product in purchase.content.all():
-            print("a")
             return True
     return False
 
