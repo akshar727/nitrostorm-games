@@ -173,10 +173,10 @@ function BuyButton({ product }) {
     </button>
   );
 }
-function Logo() {
+function Logo({f}) {
   return (
     <img
-      src={getStatic() + "images/logo.svg"}
+      src={getStatic() + (f ? "images/logoLight.svg" : "images/logo.svg")}
       width="70"
       height="70"
       alt="logo"
@@ -664,7 +664,7 @@ function PageContent({ products }) {
         <footer className="tw-bg-bookmark-black tw-py-8 tw-text-white">
           <div className="tw-container tw-flex tw-flex-col tw-items-center md:tw-flex-row">
             <div className="tw-flex tw-flex-1 tw-flex-wrap tw-items-center tw-justify-center tw-gap-12 md:tw-justify-start">
-              <Logo />
+              <Logo f={true} />
               <ul className="tw-flex tw-gap-12 tw-text-xs tw-uppercase">
                 <MenuItems />
               </ul>
