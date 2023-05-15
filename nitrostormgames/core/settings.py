@@ -151,7 +151,7 @@ if not DEBUG:
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CSRF_TRUSTED_ORIGINS = ['https://*.github.dev','http://localhost:8000','http://127.0.0.1:8000','https://*.vercel.app']
+CSRF_TRUSTED_ORIGINS = ['https://*.github.dev','http://localhost:8000','http://127.0.0.1:8000','https://*.railway.app']
 
 STATIC_ROOT = BASE_DIR / 'staticfiles_build'
 
