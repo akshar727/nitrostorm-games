@@ -20,3 +20,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path("",include("frontend.urls"))
 ]
+
+admin.site.site_header = 'Nitrostorm Games Administration'
